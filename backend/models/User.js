@@ -35,6 +35,12 @@ import bcrypt from 'bcryptjs';
   customId: {
     type: String,
     trim: true
+  },
+  resetPasswordOTP: {
+    type: String
+  },
+  resetPasswordOTPExpires: {
+    type: Date
   }
 }, {
   timestamps: true

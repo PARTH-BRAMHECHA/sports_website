@@ -1,11 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import eventSchema from '../models/User.js';
-
-const Achievement = require('../models/Achievement');
+import { Achievement, Event } from '../models/User.js';
 
 // Add a new achievement
-exports.addAchievement = async (req, res) => {
+export const addAchievement = async (req, res) => {
   try {
     const achievement = new Achievement(req.body);
     await achievement.save();
@@ -16,7 +14,7 @@ exports.addAchievement = async (req, res) => {
 };
 
 // Update an existing achievement
-exports.updateAchievement = async (req, res) => {
+export const updateAchievement = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedAchievement = await Achievement.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
@@ -30,7 +28,7 @@ exports.updateAchievement = async (req, res) => {
 };
 
 // Delete an achievement
-exports.deleteAchievement = async (req, res) => {
+export const deleteAchievement = async (req, res) => {
   try {
     const { id } = req.params;
     const deletedAchievement = await Achievement.findByIdAndDelete(id);
@@ -44,7 +42,7 @@ exports.deleteAchievement = async (req, res) => {
 };
 
 // Get all achievements
-exports.getAllAchievements = async (req, res) => {
+export const getAllAchievements = async (req, res) => {
   try {
     const achievements = await Achievement.find();
     res.status(200).json(achievements);
@@ -54,7 +52,7 @@ exports.getAllAchievements = async (req, res) => {
 };
 
 // Get a specific achievement by ID
-exports.getAchievementById = async (req, res) => {
+export const getAchievementById = async (req, res) => {
   try {
     const { id } = req.params;
     const achievement = await Achievement.findById(id);
@@ -67,10 +65,8 @@ exports.getAchievementById = async (req, res) => {
   }
 };
 
-const Event = require('../models/Event');
-
 // Add a new event
-exports.addEvent = async (req, res) => {
+export const addEvent = async (req, res) => {
   try {
     const event = new Event(req.body);
     await event.save();
@@ -81,7 +77,7 @@ exports.addEvent = async (req, res) => {
 };
 
 // Update an existing event
-exports.updateEvent = async (req, res) => {
+export const updateEvent = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedEvent = await Event.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
@@ -95,7 +91,7 @@ exports.updateEvent = async (req, res) => {
 };
 
 // Delete an event
-exports.deleteEvent = async (req, res) => {
+export const deleteEvent = async (req, res) => {
   try {
     const { id } = req.params;
     const deletedEvent = await Event.findByIdAndDelete(id);
@@ -109,7 +105,7 @@ exports.deleteEvent = async (req, res) => {
 };
 
 // Get all events
-exports.getAllEvents = async (req, res) => {
+export const getAllEvents = async (req, res) => {
   try {
     const events = await Event.find();
     res.status(200).json(events);
@@ -119,7 +115,7 @@ exports.getAllEvents = async (req, res) => {
 };
 
 // Get a specific event by ID
-exports.getEventById = async (req, res) => {
+export const getEventById = async (req, res) => {
   try {
     const { id } = req.params;
     const event = await Event.findById(id);

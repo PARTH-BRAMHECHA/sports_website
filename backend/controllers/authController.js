@@ -14,16 +14,12 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        // Hash the password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        console.log("Hashed Password Stored:", hashedPassword);
-
         // Create and save new user
+        // No need to hash password here, the pre-save hook will handle it
         user = new User({
             name,
             email,
-            password: hashedPassword,
+            password, // The password will be hashed by the pre-save hook
             userType,
             studentId,
         });
@@ -67,7 +63,7 @@ export const login = async (req, res) => {
 
         // ✅ Generate JWT Token
         const token = jwt.sign(
-            { id: user._id, email: user.email, userType: user.userType },
+            { userId: user._id, email: user.email, userType: user.userType },
             process.env.JWT_SECRET, // Ensure you have this in your `.env`
             { expiresIn: '7d' }
         );
@@ -76,8 +72,12 @@ export const login = async (req, res) => {
         res.status(200).json({ 
             message: "Login successful", 
             token, 
-            userId: user._id,
-            userType: user.userType 
+            user: {
+                userId: user._id,
+                name: user.name,
+                email: user.email,
+                userType: user.userType
+            }
         });
 
     } catch (err) {

@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import * as achievementController from '../controllers/achievementController.js';
+import * as eventController from '../controllers/eventController.js';
+import { verifyAdmin } from '../middleware/authMiddleware.js';
+
 const router = express.Router();
-const achievementController = require('../controllers/achievementController');
-const eventController = require('../controllers/eventController');
-const { verifyAdmin } = require('../middleware/authMiddleware');
 
 // Achievement Routes
 router.post('/achievements', verifyAdmin, achievementController.addAchievement);
@@ -18,4 +19,4 @@ router.delete('/events/:id', verifyAdmin, eventController.deleteEvent);
 router.get('/events', eventController.getAllEvents);
 router.get('/events/:id', eventController.getEventById);
 
-module.exports = router;
+export default router;
