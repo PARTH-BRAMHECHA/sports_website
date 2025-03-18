@@ -8,11 +8,13 @@ const ProtectedRoute = ({ children }) => {
     return null; // or a loading spinner
   }
 
-  if (!user || !user.isAdmin) {
+  // Check if user exists and if they have admin privileges
+  if (!user || user.userType !== 'admin') {
+    console.log("Access denied: User is not an admin");
     return <Navigate to="/login" />;
   }
 
   return children;
 };
 
-export default ProtectedRoute; 
+export default ProtectedRoute;

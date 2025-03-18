@@ -51,7 +51,14 @@ const Login = () => {
       };
 
       await login(loginData);
-      navigate(loginData.userType === 'admin' ? '/admin' : '/');
+      
+      // Navigate based on user type
+      if (loginData.userType === 'admin') {
+        console.log("Redirecting to admin dashboard...");
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       console.error("❌ Login Error:", err.response ? err.response.data : err.message);
       setError(err.response?.data?.message || 'Login failed. Please try again.');

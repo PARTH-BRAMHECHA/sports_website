@@ -43,7 +43,12 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem('token', data.token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-      setUser(data.user);
+      
+      // Add isAdmin flag based on userType
+      setUser({
+        ...data.user,
+        isAdmin: data.user.userType === 'admin'
+      });
     } catch (error) {
       console.error("❌ Login Failed:", error.response?.data || error.message);
       throw error;
