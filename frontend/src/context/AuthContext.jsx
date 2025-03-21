@@ -31,22 +31,23 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (credentials) => {
-    console.log("🔹 Sending login request:", credentials); // ✅ Debugging
+    console.log("🔹 Sending login request:", credentials);
 
     try {
       const { data } = await axios.post('http://localhost:4000/api/auth/login', { 
         ...credentials, 
-        userType: credentials.userType || 'student' // Ensure userType is always sent 
+        userType: credentials.userType || 'student'
       });
 
-      console.log("✅ Login Response:", data); // ✅ Debugging
+      console.log("✅ Login Response:", data);
 
       localStorage.setItem('token', data.token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
       
-      // Add isAdmin flag based on userType
+      // Store token in the user object so components can access it
       setUser({
         ...data.user,
+        token: data.token,
         isAdmin: data.user.userType === 'admin'
       });
     } catch (error) {

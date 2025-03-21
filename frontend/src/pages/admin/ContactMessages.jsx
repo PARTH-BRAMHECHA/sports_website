@@ -40,7 +40,7 @@ const ContactMessages = () => {
 
   const fetchMessages = async () => {
     try {
-      const { data } = await axios.get('http://localhost:6000/api/contact', {
+      const { data } = await axios.get('http://localhost:4000/api/contact', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setMessages(data);
@@ -52,7 +52,7 @@ const ContactMessages = () => {
   const handleMarkAsRead = async (id) => {
     try {
       await axios.patch(
-        `http://localhost:6000/api/contact/${id}/read`,
+        `http://localhost:4000/api/contact/${id}/read`,
         {},
         {
           headers: { Authorization: `Bearer ${user.token}` }
@@ -67,7 +67,7 @@ const ContactMessages = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this message?')) {
       try {
-        await axios.delete(`http://localhost:6000/api/contact/${id}`, {
+        await axios.delete(`http://localhost:4000/api/contact/${id}`, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         fetchMessages();
@@ -201,4 +201,4 @@ const ContactMessages = () => {
   );
 };
 
-export default ContactMessages; 
+export default ContactMessages;

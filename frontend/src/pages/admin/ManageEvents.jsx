@@ -47,8 +47,10 @@ const ManageEvents = () => {
 
   const fetchEvents = async () => {
     try {
-      const { data } = await axios.get('http://localhost:6000/api/events', {
-        headers: { Authorization: `Bearer ${user.token}` }
+      const { data } = await axios.get('http://localhost:4000/api/admin/events', {
+        headers: { 
+          'Authorization': `Bearer ${user.token}`
+        }
       });
       setEvents(data);
     } catch (error) {
@@ -89,31 +91,48 @@ const ManageEvents = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Ensure sports field is properly handled - currently empty array
+      // If you have a way to select sports in your form, make sure they're included here
+      const dataToSend = {
+        ...formData,
+        // Set a default sport if empty
+        sports: formData.sports.length ? formData.sports : ['General']
+      };
+      
+      console.log("Submitting event data:", dataToSend);
+      
       if (selectedEvent) {
         await axios.put(
-          `http://localhost:6000/api/events/${selectedEvent._id}`,
-          formData,
+          `http://localhost:4000/api/admin/events/${selectedEvent._id}`,
+          dataToSend,
           {
-            headers: { Authorization: `Bearer ${user.token}` }
+            headers: { 
+              'Authorization': `Bearer ${user.token}`
+            }
           }
         );
       } else {
-        await axios.post('http://localhost:6000/api/events', formData, {
-          headers: { Authorization: `Bearer ${user.token}` }
+        await axios.post('http://localhost:4000/api/admin/events', dataToSend, {
+          headers: { 
+            'Authorization': `Bearer ${user.token}`
+          }
         });
       }
       fetchEvents();
       handleClose();
     } catch (error) {
       console.error('Error saving event:', error);
+      alert(`Failed to save event: ${error.response?.data?.error || error.message}`);
     }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this event?')) {
       try {
-        await axios.delete(`http://localhost:6000/api/events/${id}`, {
-          headers: { Authorization: `Bearer ${user.token}` }
+        await axios.delete(`http://localhost:4000/api/admin/events/${id}`, {
+          headers: { 
+            'Authorization': `Bearer ${user.token}` 
+          }
         });
         fetchEvents();
       } catch (error) {
@@ -202,7 +221,50 @@ const ManageEvents = () => {
               <MenuItem value="intra">INTRA</MenuItem>
               <MenuItem value="external">External</MenuItem>
             </TextField>
-            {/* Add more form fields */}
+
+            {/* Date fields */}
+            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+              <DatePicker
+                label="Start Date"
+                value={formData.startDate}
+                onChange={(date) => setFormData({ ...formData, startDate: date })}
+                renderInput={(params) => <TextField {...params} fullWidth required />}
+              />
+              <DatePicker
+                label="End Date"
+                value={formData.endDate}
+                onChange={(date) => setFormData({ ...formData, endDate: date })}
+                renderInput={(params) => <TextField {...params} fullWidth required />}
+              />
+            </Box>
+
+            <TextField
+              fullWidth
+              label="Venue"
+              value={formData.venue}
+              onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+              margin="normal"
+              required
+            />
+
+            <TextField
+              fullWidth
+              label="Description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              margin="normal"
+              multiline
+              rows={3}
+              required
+            />
+
+            <TextField
+              fullWidth
+              label="Brochure URL (Optional)"
+              value={formData.brochureUrl}
+              onChange={(e) => setFormData({ ...formData, brochureUrl: e.target.value })}
+              margin="normal"
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
@@ -216,4 +278,4 @@ const ManageEvents = () => {
   );
 };
 
-export default ManageEvents; 
+export default ManageEvents;
