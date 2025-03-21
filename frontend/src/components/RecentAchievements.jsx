@@ -18,7 +18,7 @@ const RecentAchievements = () => {
   useEffect(() => {
     const fetchAchievements = async () => {
       try {
-        const { data } = await axios.get('http://localhost:6000/api/achievements');
+        const { data } = await axios.get('http://localhost:5000/api/achievements');
         const currentYear = new Date().getFullYear();
         const recentAchievements = data.filter(achievement => achievement.year === currentYear);
         setAchievements(recentAchievements);
@@ -62,4 +62,4 @@ const RecentAchievements = () => {
   );
 };
 
-export default RecentAchievements; 
+export default RecentAchievements;

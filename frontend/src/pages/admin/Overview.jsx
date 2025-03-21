@@ -56,7 +56,7 @@ const Overview = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get('http://localhost:6000/api/admin/stats', {
+        const { data } = await axios.get('http://localhost:5000/api/admin/stats', {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         setStats(data);
@@ -192,4 +192,4 @@ const Overview = () => {
   );
 };
 
-export default Overview; 
+export default Overview;

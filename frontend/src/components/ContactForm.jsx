@@ -40,7 +40,7 @@ const ContactForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:6000/api/contact', formData);
+      await axios.post('http://localhost:5000/api/contact', formData);
       setStatus({
         type: 'success',
         message: 'Thank you for your message. We will contact you soon!'
@@ -57,6 +57,16 @@ const ContactForm = () => {
         type: 'error',
         message: 'There was an error sending your message. Please try again.'
       });
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get('http://localhost:5000/api/contact', {});
+      await axios.patch(`http://localhost:5000/api/contact/${data.id}/read`, {}, {});
+      await axios.delete(`http://localhost:5000/api/contact/${data.id}`, {});
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -141,4 +151,4 @@ const ContactForm = () => {
   );
 };
 
-export default ContactForm; 
+export default ContactForm;

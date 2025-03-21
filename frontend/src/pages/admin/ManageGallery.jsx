@@ -37,7 +37,8 @@ const ManageGallery = () => {
 
   const fetchImages = async () => {
     try {
-      const { data } = await axios.get('http://localhost:6000/api/gallery', {
+      // Update the API endpoint to match backend
+      const { data } = await axios.get('http://localhost:4000/api/gallery', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setImages(data);
@@ -63,7 +64,7 @@ const ManageGallery = () => {
       formDataToSend.append('description', formData.description);
       formDataToSend.append('image', formData.file);
 
-      await axios.post('http://localhost:6000/api/gallery', formDataToSend, {
+      await axios.post('http://localhost:4000/api/gallery', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${user.token}`
@@ -87,7 +88,7 @@ const ManageGallery = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this image?')) {
       try {
-        await axios.delete(`http://localhost:6000/api/gallery/${id}`, {
+        await axios.delete(`http://localhost:4000/api/gallery/${id}`, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         fetchImages();
@@ -197,4 +198,4 @@ const ManageGallery = () => {
   );
 };
 
-export default ManageGallery; 
+export default ManageGallery;

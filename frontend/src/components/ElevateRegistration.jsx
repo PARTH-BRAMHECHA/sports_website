@@ -101,7 +101,8 @@ const ElevateRegistration = () => {
     setLoading(true);
 
     try {
-      await axios.post('http://localhost:6000/api/elevate/register', formData);
+      // Update to use consistent base URL
+      await axios.post('http://localhost:4000/api/elevate/register', formData);
       setSnackbar({
         open: true,
         message: 'Registration successful! We will contact you soon.',
@@ -270,4 +271,4 @@ const ElevateRegistration = () => {
   );
 };
 
-export default ElevateRegistration; 
+export default ElevateRegistration;

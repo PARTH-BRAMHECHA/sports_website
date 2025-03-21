@@ -47,9 +47,15 @@ import bcrypt from 'bcryptjs';
 });
 
  const eventSchema = new mongoose.Schema({
-  eventName: {
+  title: {
     type: String,
     required: true,
+    trim: true
+  },
+  type: {
+    type: String,
+    required: true,
+    enum: ['elevate', 'intra', 'external', 'tournament', 'annual'],
     trim: true
   },
   description: {
@@ -69,25 +75,21 @@ import bcrypt from 'bcryptjs';
     required: true,
     trim: true
   },
-  sportsActivities: [{
-    sportName: {
-      type: String,
-      required: true,
-      trim: true
-    }
+  sports: [{
+    type: String,
+    trim: true
   }],
-  brochureLink: {
+  brochureUrl: {
     type: String,
     trim: true
   },
-  websiteLink: {
-    type: String,
-    trim: true
+  isActive: {
+    type: Boolean,
+    default: true
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: 'User'
   }
 }, {
   timestamps: true
