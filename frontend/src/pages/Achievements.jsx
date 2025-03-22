@@ -14,92 +14,14 @@ import {
   TableRow,
   Chip,
   Stack,
-  Paper
+  Paper,
+  CircularProgress
 } from '@mui/material';
 import { EmojiEvents, Groups, Person } from '@mui/icons-material';
 import CountUp from 'react-countup';
+import axios from 'axios';
 
-// Static achievements data
-const staticAchievements = [
-  {
-    level: "Khelo India",
-    achievements: [
-      {
-        sport: "Wrestling",
-        type: "individual",
-        studentName: "Rahul Kumar",
-        position: "Gold Medal",
-        year: 2024
-      },
-      {
-        sport: "Athletics",
-        type: "individual",
-        studentName: "Priya Sharma",
-        position: "Silver Medal - 100m Sprint",
-        year: 2024
-      }
-    ]
-  },
-  {
-    level: "All India Inter University",
-    achievements: [
-      {
-        sport: "Cricket",
-        type: "team",
-        position: "Winners",
-        year: 2024
-      },
-      {
-        sport: "Basketball",
-        type: "team",
-        position: "Runners Up",
-        year: 2024
-      }
-    ]
-  },
-  {
-    level: "South West Zone",
-    achievements: [
-      {
-        sport: "Football",
-        type: "team",
-        position: "Champions",
-        year: 2024
-      },
-      {
-        sport: "Table Tennis",
-        type: "individual",
-        studentName: "Amit Patel",
-        position: "Winner",
-        year: 2024
-      }
-    ]
-  },
-  {
-    level: "Division Level",
-    achievements: [
-      {
-        sport: "Badminton",
-        type: "individual",
-        studentName: "Sneha Reddy",
-        position: "Gold Medal",
-        year: 2023
-      }
-    ]
-  },
-  {
-    level: "City Level",
-    achievements: [
-      {
-        sport: "Chess",
-        type: "individual",
-        studentName: "Rohan Shah",
-        position: "Champion",
-        year: 2023
-      }
-    ]
-  }
-];
+
 
 const AchievementCard = ({ level, achievements, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
@@ -303,7 +225,61 @@ const StatsBar = ({ achievements }) => {
 };
 
 const Achievements = () => {
-  const [achievementsData, setAchievementsData] = useState(staticAchievements);
+  const [achievementsData, setAchievementsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get('http://localhost:4000/api/achievements');
+        
+        if (data && data.length > 0) {
+          // Format data from API to match component structure
+          const formattedData = formatAchievementsData(data);
+          setAchievementsData(formattedData);
+        } else {
+          // Fallback to static data if API returns empty
+          setAchievementsData(staticAchievements);
+        }
+      } catch (error) {
+        console.error('Error fetching achievements:', error);
+        setAchievementsData(staticAchievements);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchAchievements();
+  }, []);
+
+  // Format data from API to match the component structure
+  const formatAchievementsData = (achievements) => {
+    // Group achievements by level
+    const groupedByLevel = achievements.reduce((acc, achievement) => {
+      const level = achievement.level;
+      if (!acc[level]) {
+        acc[level] = [];
+      }
+      
+      // Map API fields to component fields
+      acc[level].push({
+        sport: achievement.sportType,
+        type: achievement.classification === 'Individual' ? 'individual' : 'team',
+        studentName: achievement.participantName,
+        position: achievement.position,
+        year: achievement.year
+      });
+      
+      return acc;
+    }, {});
+
+    // Convert to array format needed by component
+    return Object.entries(groupedByLevel).map(([level, achievements]) => ({
+      level,
+      achievements
+    }));
+  };
 
   // Function to update achievements (for admin actions)
   const updateAchievements = (newAchievements) => {
@@ -338,27 +314,33 @@ const Achievements = () => {
           Our Achievements
         </Typography>
 
-        <Grid container spacing={4}>
-          {achievementsData.map((category) => (
-            <Grid item xs={12} md={6} key={category.level}>
-              <AchievementCard 
-                level={category.level} 
-                achievements={category.achievements}
-                onUpdate={(updatedAchievements) => {
-                  const newData = achievementsData.map(cat => 
-                    cat.level === category.level 
-                      ? { ...cat, achievements: updatedAchievements }
-                      : cat
-                  );
-                  updateAchievements(newData);
-                }}
-              />
-            </Grid>
-          ))}
-        </Grid>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', my: 5 }}>
+            <CircularProgress sx={{ color: 'white' }} />
+          </Box>
+        ) : (
+          <Grid container spacing={4}>
+            {achievementsData.map((category) => (
+              <Grid item xs={12} md={6} key={category.level}>
+                <AchievementCard 
+                  level={category.level} 
+                  achievements={category.achievements}
+                  onUpdate={(updatedAchievements) => {
+                    const newData = achievementsData.map(cat => 
+                      cat.level === category.level 
+                        ? { ...cat, achievements: updatedAchievements }
+                        : cat
+                    );
+                    updateAchievements(newData);
+                  }}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        )}
         
         {/* Stats Bar */}
-        <StatsBar achievements={achievementsData} />
+        {!loading && <StatsBar achievements={achievementsData} />}
       </Container>
     </Box>
   );
@@ -376,4 +358,4 @@ const getLevelColor = (level) => {
   return colors[level] || "#1976d2";
 };
 
-export default Achievements; 
+export default Achievements;

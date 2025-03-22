@@ -91,9 +91,11 @@ router.get('/admin/events', async (req, res) => {
 
 router.get('/achievements', async (req, res) => {
   try {
-    const achievements = await Event.find().sort({ createdAt: -1 });
+    const achievements = await Achievement.find().sort({ createdAt: -1 });
+    console.log('Retrieved achievements from DB:', achievements.length);
     res.status(200).json(achievements);
   } catch (error) {
+    console.error('Error fetching achievements:', error);
     res.status(500).json({ error: error.message });
   }
 });
