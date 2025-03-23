@@ -318,7 +318,7 @@ const Achievements = () => {
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        backgroundImage: `url('images/achievements-bg.jpg')`,
+        backgroundImage: `url('/images/achievements-bg.jpg')`,
         minHeight: '100vh',
         width: '100%',
         py: 8,
