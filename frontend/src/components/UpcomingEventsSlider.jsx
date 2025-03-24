@@ -14,8 +14,7 @@ import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
   CalendarToday,
-  LocationOn,
-  SportsSoccer
+  LocationOn
 } from '@mui/icons-material';
 
 // Static upcoming events data
@@ -27,7 +26,7 @@ const upcomingEvents = [
     startDate: "2024-02-24",
     endDate: "2024-02-27",
     venue: "PICT Campus Ground",
-    sports: ["Basketball", "Volleyball","Carrom","Chess","Table Tennis"],
+    sports: ["Basketball", "Volleyball", "Carrom", "Chess", "Table Tennis"],
     type: "elevate",
     registrationLink: "https://elevate.pict.edu"
   },
@@ -40,27 +39,7 @@ const upcomingEvents = [
     venue: "PICT Cricket Ground",
     sports: ["Cricket"],
     type: "tournament"
-  },
-  /*{
-    id: 3,
-    title: "PICT Athletics Meet 2024",
-    description: "Annual athletics competition featuring track and field events",
-    startDate: "2024-04-05",
-    endDate: "2024-04-07",
-    venue: "PICT Sports Complex",
-    sports: ["Athletics", "Running", "Long Jump", "High Jump"],
-    type: "intra"
-  },
-  {
-    id: 4,
-    title: "Basketball Championship",
-    description: "Inter-department basketball tournament",
-    startDate: "2024-03-01",
-    endDate: "2024-03-03",
-    venue: "PICT Basketball Court",
-    sports: ["Basketball"],
-    type: "intra"
-  }*/
+  }
 ];
 
 const UpcomingEventsSlider = () => {
@@ -168,20 +147,15 @@ const UpcomingEventsSlider = () => {
                 {upcomingEvents[currentIndex].sports.map((sport) => (
                   <Chip
                     key={sport}
-                    icon={<SportsSoccer />}
                     label={sport}
-                    variant={upcomingEvents[currentIndex].type === 'elevate' ? 'filled' : 'outlined'}
+                    variant="outlined"
                     size="small"
-                    sx={upcomingEvents[currentIndex].type === 'elevate' ? {
-                      backgroundColor: '#00a693',
-                      color: 'white',
-                      '&:hover': {
-                        backgroundColor: '#008575',
-                      },
-                      '& .MuiSvgIcon-root': {
-                        color: 'white'
-                      }
-                    } : {}}
+                    sx={{
+                      backgroundColor: 'white', // White background
+                      color: '#007bff', // Blue text
+                      fontWeight: 500,
+                      border: '1px solid grey', // Grey border
+                    }}
                   />
                 ))}
               </Box>
@@ -221,4 +195,4 @@ const UpcomingEventsSlider = () => {
   );
 };
 
-export default UpcomingEventsSlider; 
+export default UpcomingEventsSlider;

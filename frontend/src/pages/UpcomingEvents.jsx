@@ -14,7 +14,6 @@ import {
 import {
   CalendarToday,
   LocationOn,
-  SportsSoccer,
   Timer,
   Event
 } from '@mui/icons-material';
@@ -109,9 +108,9 @@ const UpcomingEvents = () => {
                     {event.sports.map((sport) => (
                       <Chip
                         key={sport}
-                        icon={<SportsSoccer />}
                         label={sport}
                         variant="outlined"
+                        sx={{ color: '#007bff', fontWeight: 500 }}
                       />
                     ))}
                   </Box>
@@ -133,14 +132,14 @@ const UpcomingEvents = () => {
 
                   {event.registrationLink && (
                     <Box sx={{ mt: 2 }}>
-                      <Button
+                      {/* <Button
                         variant="contained"
                         color="primary"
                         href={event.registrationLink}
                         target="_blank"
                       >
                         Register Now
-                      </Button>
+                      </Button> */}
                     </Box>
                   )}
                 </CardContent>
