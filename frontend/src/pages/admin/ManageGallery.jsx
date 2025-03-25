@@ -29,7 +29,7 @@ const ManageGallery = () => {
     description: '',
     file: null
   });
-  const { user } = useAuth();
+  const { user } = useAuth(); // Ensure user is available
 
   useEffect(() => {
     fetchImages();
@@ -37,7 +37,6 @@ const ManageGallery = () => {
 
   const fetchImages = async () => {
     try {
-      // Update the API endpoint to match backend
       const { data } = await axios.get('http://localhost:4000/api/gallery', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
@@ -63,6 +62,7 @@ const ManageGallery = () => {
       formDataToSend.append('title', formData.title);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('image', formData.file);
+      formDataToSend.append('user', user._id); 
 
       await axios.post('http://localhost:4000/api/gallery', formDataToSend, {
         headers: {
@@ -118,7 +118,7 @@ const ManageGallery = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image={image.url}
+                image={image.imageUrl} // ✅ FIXED: Use `image.imageUrl` instead of `image.url`
                 alt={image.title}
                 sx={{ objectFit: 'cover' }}
               />

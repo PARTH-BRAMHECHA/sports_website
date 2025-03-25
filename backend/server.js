@@ -1,49 +1,62 @@
-import express from 'express';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+// import express from 'express';
+// import cors from 'cors';
+// import dotenv from 'dotenv';
+// import mongoose from 'mongoose';
+// import authRoutes from './routes/auth.js';
 
-dotenv.config();
+// dotenv.config();
 
-const app = express();
+// const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// // Comprehensive CORS setup
+// const corsOptions = {
+//     origin: [
+//         'http://localhost:3000', 
+//         'http://127.0.0.1:3000', 
+//         'http://localhost:5173', 
+//         '*'
+//     ],
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//     credentials: true
+// };
 
-// MongoDB connection
-const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/sports_website';
+// // Middleware
+// app.use(cors(corsOptions));
+// app.use(express.json());
 
-try {
-  await mongoose.connect(uri);
-  console.log('MongoDB connection established');
-} catch (err) {
-  console.error('MongoDB connection error:', err);
-  process.exit(1);
-}
+// // Logging middleware
+// app.use((req, res, next) => {
+//     console.log(`${req.method} ${req.path}`);
+//     console.log('Headers:', req.headers);
+//     console.log('Body:', req.body);
+//     next();
+// });
 
-// Basic route
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to Sports Website API' });
-});
+// // Routes
+// app.use('/api/auth', authRoutes);
 
-// Start server
-const PORT = process.env.PORT || 5001;  // Changed default to 5001
+// // MongoDB Connection
+// const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/sports_portal';
 
-// Check if port is in use and try the next available port
-const startServer = async () => {
-  try {
-    await app.listen(PORT);
-    console.log(`Server is running on port ${PORT}`);
-  } catch (err) {
-    if (err.code === 'EADDRINUSE') {
-      console.log(`Port ${PORT} is busy, trying ${PORT + 1}`);
-      await app.listen(PORT + 1);
-      console.log(`Server is running on port ${PORT + 1}`);
-    } else {
-      console.error('Server error:', err);
-    }
-  }
-};
+// mongoose.connect(mongoURI, { 
+//     useNewUrlParser: true, 
+//     useUnifiedTopology: true 
+// })
+// .then(() => console.log('Connected to MongoDB'))
+// .catch(err => console.error('MongoDB connection error:', err));
 
-startServer(); 
+// // Error handling middleware
+// app.use((err, req, res, next) => {
+//     console.error(err.stack);
+//     res.status(500).json({ 
+//         message: 'Something went wrong', 
+//         error: err.message 
+//     });
+// });
+
+// // Start Server
+// const PORT = process.env.PORT || 4000;
+// app.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`);
+// });

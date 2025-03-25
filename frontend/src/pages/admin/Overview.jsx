@@ -9,7 +9,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider,
   Card,
   CardContent,
   CardHeader
@@ -18,8 +17,7 @@ import {
   Event,
   CalendarToday,
   EmojiEvents,
-  Mail,
-  SportsScore
+  PhotoLibrary
 } from '@mui/icons-material';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
@@ -70,8 +68,21 @@ const Overview = () => {
     fetchStats();
   }, [user.token]);
 
-  if (loading) return <CircularProgress />;
-  if (!stats) return <Typography color="error">Error loading dashboard data</Typography>;
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <Typography color="error" align="center">
+        Error loading dashboard data
+      </Typography>
+    );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -107,10 +118,10 @@ const Overview = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            title="Unread Messages"
-            value={stats.unreadMessages}
-            icon={<Mail sx={{ fontSize: 40 }} />}
-            color="error"
+            title="Gallery Items"
+            value={stats.totalGalleryItems}
+            icon={<PhotoLibrary sx={{ fontSize: 40 }} />}
+            color="info"
           />
         </Grid>
 
@@ -156,10 +167,8 @@ const Overview = () => {
                 {stats.recentAchievements.map((achievement) => (
                   <ListItem key={achievement._id}>
                     <ListItemText
-                      primary={`${achievement.sport} - ${achievement.position}`}
-                      secondary={`${achievement.studentName || 'Team'} | ${new Date(
-                        achievement.date
-                      ).toLocaleDateString()}`}
+                      primary={`${achievement.sportType} - ${achievement.position}`}
+                      secondary={`${achievement.participantName} | ${achievement.level}`}
                     />
                   </ListItem>
                 ))}
@@ -177,9 +186,7 @@ const Overview = () => {
                   <ListItem key={event._id}>
                     <ListItemText
                       primary={event.title}
-                      secondary={`${new Date(
-                        event.startDate
-                      ).toLocaleDateString()} | ${event.venue}`}
+                      secondary={`${new Date(event.startDate).toLocaleDateString()} | ${event.venue}`}
                     />
                   </ListItem>
                 ))}

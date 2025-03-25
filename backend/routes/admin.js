@@ -21,7 +21,7 @@ router.get('/check-auth', verifyAdmin, (req, res) => {
 });
 
 // Event routes - these match what your frontend is calling
-router.post('/admin/events', verifyAdmin, async (req, res) => {
+router.post('/events', verifyAdmin, async (req, res) => {
   try {
     console.log('Creating event:', req.body);
     const event = new Event(req.body);
@@ -80,7 +80,7 @@ router.post('/gallery', verifyAdmin, upload.single('image'), async (req, res) =>
   console.log("Hi the galeery is working")
 });
 
-router.get('/admin/events', async (req, res) => {
+router.get('/events', async (req, res) => {
   try {
     const events = await Event.find().sort({ createdAt: -1 });
     res.status(200).json(events);
@@ -100,7 +100,7 @@ router.get('/achievements', async (req, res) => {
   }
 });
 
-router.put('/admin/events/:id', verifyAdmin, async (req, res) => {
+router.put('/events/:id', verifyAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const updatedEvent = await Event.findByIdAndUpdate(id, req.body, { new: true });
@@ -110,7 +110,7 @@ router.put('/admin/events/:id', verifyAdmin, async (req, res) => {
   }
 });
 
-router.delete('/admin/events/:id', verifyAdmin, async (req, res) => {
+router.delete('/events/:id', verifyAdmin, async (req, res) => {
   try {
     await Event.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: 'Event deleted successfully' });

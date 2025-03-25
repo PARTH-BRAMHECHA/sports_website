@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Container,
   Grid,
@@ -8,79 +8,39 @@ import {
   Typography,
   Box,
   Modal,
-  IconButton
+  IconButton,
+  CircularProgress
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
-
-// Static gallery data
-const galleryImages = [
-  {
-    id: 1,
-    title: "Cricket Championship 2024",
-    description: "PICT Cricket Team winning the inter-college tournament",
-    url: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&h=600",
-    category: "Cricket"
-  },
-  {
-    id: 2,
-    title: "Basketball Tournament",
-    description: "Basketball team during South West Zone tournament",
-    url: "https://images.unsplash.com/photo-1519861531473-9200262188bf?w=800&h=600",
-    category: "Basketball"
-  },
-  {
-    id: 3,
-    title: "Athletics Meet",
-    description: "Annual athletics meet - 100m sprint finals",
-    url: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&h=600",
-    category: "Athletics"
-  },
-  {
-    id: 4,
-    title: "Football Match",
-    description: "Football team in action during division level match",
-    url: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&h=600",
-    category: "Football"
-  },
-  {
-    id: 5,
-    title: "Table Tennis Championship",
-    description: "Table Tennis singles final match",
-    url: "https://images.unsplash.com/photo-1534158914592-062992fbe900?w=800&h=600",
-    category: "Table Tennis"
-  },
-  {
-    id: 6,
-    title: "Chess Tournament",
-    description: "Inter-college chess tournament finals",
-    url: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?w=800&h=600",
-    category: "Chess"
-  },
-  {
-    id: 7,
-    title: "Badminton Finals",
-    description: "Inter-college badminton championship match",
-    url: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&h=600",
-    category: "Badminton"
-  },
-  {
-    id: 8,
-    title: "Swimming Competition",
-    description: "Annual swimming championship",
-    url: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&h=600",
-    category: "Swimming"
-  },
-  {
-    id: 9,
-    title: "Volleyball Tournament",
-    description: "PICT Volleyball team in action",
-    url: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=800&h=600",
-    category: "Volleyball"
-  }
-];
+import axios from 'axios';
 
 const Gallery = () => {
+  const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const { data } = await axios.get('http://localhost:4000/api/gallery');
+        setImages(data);
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ my: 4 }}>
@@ -89,8 +49,8 @@ const Gallery = () => {
       </Typography>
 
       <Grid container spacing={3}>
-        {galleryImages.map((image) => (
-          <Grid item xs={12} sm={6} md={4} key={image.id}>
+        {images.map((image) => (
+          <Grid item xs={12} sm={6} md={4} key={image._id}>
             <Card
               sx={{
                 height: '100%',
@@ -107,7 +67,7 @@ const Gallery = () => {
               <CardMedia
                 component="img"
                 height="260"
-                image={image.url}
+                image={`http://localhost:4000${image.imageUrl}`}
                 alt={image.title}
                 sx={{ 
                   objectFit: 'cover',
@@ -168,7 +128,7 @@ const Gallery = () => {
           {selectedImage && (
             <>
               <img
-                src={selectedImage.url}
+                src={`http://localhost:4000${selectedImage.imageUrl}`}
                 alt={selectedImage.title}
                 style={{
                   maxWidth: '100%',
@@ -192,4 +152,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery; 
+export default Gallery;

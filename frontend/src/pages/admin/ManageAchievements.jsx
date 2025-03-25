@@ -66,7 +66,7 @@ const ManageAchievements = () => {
 
   const fetchAchievements = async () => {
     try {
-      const { data } = await axios.get('http://localhost:4000/api/achievements', {
+      const { data } = await axios.get('http://localhost:4000/api/admin/achievements', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setAchievements(data);
@@ -104,14 +104,14 @@ const ManageAchievements = () => {
     try {
       if (selectedAchievement) {
         await axios.put(
-          `http://localhost:4000/api/achievements/${selectedAchievement._id}`,
+          `http://localhost:4000/api/admin/achievements/${selectedAchievement._id}`,
           formData,
           {
             headers: { Authorization: `Bearer ${user.token}` }
           }
         );
       } else {
-        await axios.post('http://localhost:4000/api/achievements', formData, {
+        await axios.post('http://localhost:4000/api/admin/achievements', formData, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
       }
