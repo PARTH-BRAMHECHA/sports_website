@@ -16,7 +16,7 @@ const GallerySchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Admin',
+    ref: 'Admin', 
     required: true
   },
   createdAt: {

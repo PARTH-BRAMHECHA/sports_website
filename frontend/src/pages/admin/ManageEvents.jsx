@@ -249,6 +249,14 @@ const ManageEvents = () => {
 
             <TextField
               fullWidth
+              label="Sports"
+              value={formData.sports}
+              onChange={(e) => setFormData({ ...formData, sports: e.target.value })}
+              margin="normal"
+            />
+ 
+            <TextField
+              fullWidth
               label="Description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
@@ -9,7 +9,8 @@ import {
   Chip,
   Paper,
   Divider,
-  Button
+  Button,
+  CircularProgress
 } from '@mui/material';
 import {
   CalendarToday,
@@ -17,10 +18,27 @@ import {
   Timer,
   Event
 } from '@mui/icons-material';
-import eventsData, { getEventTypeColor, getEventTypeLabel } from '../data/eventsData';
+import axios from 'axios';
 
 const UpcomingEvents = () => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedType, setSelectedType] = useState('all');
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const { data } = await axios.get('http://localhost:4000/api/admin/events');
+      setEvents(data);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -32,10 +50,38 @@ const UpcomingEvents = () => {
   };
 
   const filteredEvents = selectedType === 'all' 
-    ? eventsData 
-    : eventsData.filter(event => event.type === selectedType);
+    ? events 
+    : events.filter(event => event.type === selectedType);
 
-  const eventTypes = ['all', ...new Set(eventsData.map(event => event.type))];
+  const eventTypes = ['all', ...new Set(events.map(event => event.type))];
+
+  const getEventTypeColor = (type) => {
+    const colors = {
+      elevate: 'error',
+      tournament: 'primary',
+      intra: 'success',
+      annual: 'warning'
+    };
+    return colors[type] || 'default';
+  };
+
+  const getEventTypeLabel = (type) => {
+    const labels = {
+      elevate: 'ELEVATE',
+      tournament: 'Tournament',
+      intra: 'Intra-College',
+      annual: 'Annual Event'
+    };
+    return labels[type] || type;
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ my: 4 }}>
@@ -57,7 +103,7 @@ const UpcomingEvents = () => {
 
       <Grid container spacing={3}>
         {filteredEvents.map((event) => (
-          <Grid item xs={12} key={event.id}>
+          <Grid item xs={12} key={event._id}>
             <Paper elevation={3}>
               <Card>
                 <CardContent>
@@ -67,14 +113,6 @@ const UpcomingEvents = () => {
                       color={getEventTypeColor(event.type)}
                       icon={<Event />}
                     />
-                    {event.registrationDeadline && (
-                      <Chip 
-                        label={`Registration Deadline: ${formatDate(event.registrationDeadline)}`}
-                        color="warning"
-                        icon={<Timer />}
-                        variant="outlined"
-                      />
-                    )}
                   </Box>
 
                   <Typography variant="h4" gutterBottom>
@@ -105,7 +143,7 @@ const UpcomingEvents = () => {
                     Sports & Activities:
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-                    {event.sports.map((sport) => (
+                    {event.sports && event.sports.map((sport) => (
                       <Chip
                         key={sport}
                         label={sport}
@@ -115,31 +153,16 @@ const UpcomingEvents = () => {
                     ))}
                   </Box>
 
-                  {event.highlights && (
+                  {event.brochureUrl && (
                     <Box sx={{ mt: 2 }}>
-                      <Typography variant="h6" gutterBottom>
-                        Event Highlights:
-                      </Typography>
-                      <ul>
-                        {event.highlights.map((highlight, index) => (
-                          <li key={index}>
-                            <Typography variant="body1">{highlight}</Typography>
-                          </li>
-                        ))}
-                      </ul>
-                    </Box>
-                  )}
-
-                  {event.registrationLink && (
-                    <Box sx={{ mt: 2 }}>
-                      {/* <Button
+                      <Button
                         variant="contained"
                         color="primary"
-                        href={event.registrationLink}
+                        href={event.brochureUrl}
                         target="_blank"
                       >
-                        Register Now
-                      </Button> */}
+                        Download Brochure
+                      </Button>
                     </Box>
                   )}
                 </CardContent>
@@ -147,9 +170,17 @@ const UpcomingEvents = () => {
             </Paper>
           </Grid>
         ))}
+
+        {filteredEvents.length === 0 && (
+          <Grid item xs={12}>
+            <Typography variant="h6" align="center" color="textSecondary">
+              No events found
+            </Typography>
+          </Grid>
+        )}
       </Grid>
     </Container>
   );
 };
 
-export default UpcomingEvents; 
+export default UpcomingEvents;

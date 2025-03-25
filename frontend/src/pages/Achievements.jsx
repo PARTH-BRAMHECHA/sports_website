@@ -232,7 +232,7 @@ const Achievements = () => {
     const fetchAchievements = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get('http://localhost:4000/api/achievements');
+        const { data } = await axios.get('http://localhost:4000/api/admin/achievements');
         
         if (data && data.length > 0) {
           // Format data from API to match component structure

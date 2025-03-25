@@ -85,6 +85,14 @@ const Gallery = () => {
             </Card>
           </Grid>
         ))}
+
+        {images.length === 0 && (
+          <Grid item xs={12}>
+            <Typography variant="h6" align="center" color="textSecondary">
+              No images available
+            </Typography>
+          </Grid>
+        )}
       </Grid>
 
       {/* Image Modal */}

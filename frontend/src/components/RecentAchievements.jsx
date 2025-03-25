@@ -21,15 +21,14 @@ const RecentAchievements = () => {
     const fetchAchievements = async () => {
       try {
         setLoading(true);
-        console.log('Fetching achievements for RecentAchievements component...');
-        const { data } = await axios.get('http://localhost:4000/api/achievements');
-        console.log('RecentAchievements data received:', data);
+        const { data } = await axios.get('http://localhost:4000/api/admin/achievements');
         
+        // Filter for current year achievements
         const currentYear = new Date().getFullYear();
         const recentAchievements = data.filter(achievement => 
           achievement.year === currentYear || achievement.year === currentYear.toString()
         );
-        console.log('Filtered recent achievements:', recentAchievements);
+        
         setAchievements(recentAchievements);
       } catch (error) {
         console.error('Error fetching achievements:', error);
@@ -37,8 +36,17 @@ const RecentAchievements = () => {
         setLoading(false);
       }
     };
+    
     fetchAchievements();
   }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ my: 4 }}>
@@ -46,11 +54,7 @@ const RecentAchievements = () => {
         Recent Achievements
       </Typography>
       
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
-          <CircularProgress />
-        </Box>
-      ) : achievements.length > 0 ? (
+      {achievements.length > 0 ? (
         <TableContainer component={Paper}>
           <Table>
             <TableHead>

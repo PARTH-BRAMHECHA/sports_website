@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -8,7 +8,8 @@ import {
   IconButton,
   useTheme,
   Chip,
-  Grid
+  Grid,
+  CircularProgress
 } from '@mui/material';
 import {
   KeyboardArrowLeft,
@@ -16,46 +17,41 @@ import {
   CalendarToday,
   LocationOn
 } from '@mui/icons-material';
-
-// Static upcoming events data
-const upcomingEvents = [
-  {
-    id: 1,
-    title: "PICT ELEVATE 2024",
-    description: "Annual Sports Festival featuring multiple sports competitions and events",
-    startDate: "2024-02-24",
-    endDate: "2024-02-27",
-    venue: "PICT Campus Ground",
-    sports: ["Basketball", "Volleyball", "Carrom", "Chess", "Table Tennis"],
-    type: "elevate",
-    registrationLink: "https://elevate.pict.edu"
-  },
-  {
-    id: 2,
-    title: "Inter-College Cricket Tournament",
-    description: "Annual cricket championship between engineering colleges",
-    startDate: "2024-03-15",
-    endDate: "2024-03-20",
-    venue: "PICT Cricket Ground",
-    sports: ["Cricket"],
-    type: "tournament"
-  }
-];
+import axios from 'axios';
 
 const UpcomingEventsSlider = () => {
+  const [events, setEvents] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const { data } = await axios.get('http://localhost:4000/api/admin/events');
+      // Filter for upcoming events
+      const upcomingEvents = data.filter(event => new Date(event.startDate) > new Date());
+      setEvents(upcomingEvents);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) => 
-      prevIndex === 0 ? upcomingEvents.length - 1 : prevIndex - 1
+      prevIndex === 0 ? events.length - 1 : prevIndex - 1
     );
   };
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => 
-      prevIndex === upcomingEvents.length - 1 ? 0 : prevIndex + 1
+      prevIndex === events.length - 1 ? 0 : prevIndex + 1
     );
   };
 
@@ -76,6 +72,24 @@ const UpcomingEventsSlider = () => {
     return colors[type] || 'default';
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (events.length === 0) {
+    return (
+      <Box sx={{ textAlign: 'center', my: 3 }}>
+        <Typography variant="h6" color="textSecondary">
+          No upcoming events
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ position: 'relative', width: '100%', my: 4 }}>
       <Card 
@@ -90,23 +104,23 @@ const UpcomingEventsSlider = () => {
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
                 <Chip 
-                  label={upcomingEvents[currentIndex].type.toUpperCase()}
-                  color={getEventTypeColor(upcomingEvents[currentIndex].type)}
+                  label={events[currentIndex].type.toUpperCase()}
+                  color={getEventTypeColor(events[currentIndex].type)}
                   size="small"
                 />
-                {upcomingEvents[currentIndex].registrationLink && (
+                {events[currentIndex].brochureUrl && (
                   <Chip 
-                    label="Registration Open"
+                    label="Brochure Available"
                     color="success"
                     size="small"
-                    onClick={() => window.open(upcomingEvents[currentIndex].registrationLink)}
+                    onClick={() => window.open(events[currentIndex].brochureUrl)}
                   />
                 )}
               </Box>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="h4" gutterBottom>
-                {upcomingEvents[currentIndex].title}
+                {events[currentIndex].title}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -123,14 +137,14 @@ const UpcomingEventsSlider = () => {
                   mb: 3
                 }}
               >
-                {upcomingEvents[currentIndex].description}
+                {events[currentIndex].description}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <CalendarToday sx={{ mr: 1, color: 'primary.main' }} />
                 <Typography>
-                  {formatDate(upcomingEvents[currentIndex].startDate)} - {formatDate(upcomingEvents[currentIndex].endDate)}
+                  {formatDate(events[currentIndex].startDate)} - {formatDate(events[currentIndex].endDate)}
                 </Typography>
               </Box>
             </Grid>
@@ -138,23 +152,23 @@ const UpcomingEventsSlider = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <LocationOn sx={{ mr: 1, color: 'primary.main' }} />
                 <Typography>
-                  {upcomingEvents[currentIndex].venue}
+                  {events[currentIndex].venue}
                 </Typography>
               </Box>
             </Grid>
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                {upcomingEvents[currentIndex].sports.map((sport) => (
+                {events[currentIndex].sports && events[currentIndex].sports.map((sport) => (
                   <Chip
                     key={sport}
                     label={sport}
                     variant="outlined"
                     size="small"
                     sx={{
-                      backgroundColor: 'white', // White background
-                      color: '#007bff', // Blue text
+                      backgroundColor: 'white',
+                      color: '#007bff',
                       fontWeight: 500,
-                      border: '1px solid grey', // Grey border
+                      border: '1px solid grey',
                     }}
                   />
                 ))}

@@ -57,32 +57,23 @@ const ManageGallery = () => {
     e.preventDefault();
     setUploading(true);
 
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('title', formData.title);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('image', formData.file);
-      formDataToSend.append('user', user._id); 
+    const formData = new FormData();
+formData.append("image", selectedFile);
+formData.append("title", "Sample Title");
+formData.append("description", "Sample Description");
+formData.append("user", userId); // Ensure user ID is valid
 
-      await axios.post('http://localhost:4000/api/gallery', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${user.token}`
-        }
-      });
+fetch("/api/gallery", {
+    method: "POST",
+    headers: {
+        "Authorization": `Bearer ${token}` // Ensure authentication token is sent
+    },
+    body: formData
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error(error));
 
-      setFormData({
-        title: '',
-        description: '',
-        file: null
-      });
-      setOpen(false);
-      fetchImages();
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    } finally {
-      setUploading(false);
-    }
   };
 
   const handleDelete = async (id) => {
