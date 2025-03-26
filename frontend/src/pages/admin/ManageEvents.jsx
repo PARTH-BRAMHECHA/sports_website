@@ -17,10 +17,13 @@ import {
   TextField,
   MenuItem,
   IconButton,
-  Box
+  Box,
+  Chip,
+  Stack
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
@@ -28,6 +31,8 @@ const ManageEvents = () => {
   const [events, setEvents] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [sportInput, setSportInput] = useState('');
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     type: '',
@@ -55,16 +60,21 @@ const ManageEvents = () => {
       setEvents(data);
     } catch (error) {
       console.error('Error fetching events:', error);
+      setError('Failed to load events. Please try again.');
     }
   };
 
   const handleOpen = (event = null) => {
+    setError('');
     if (event) {
       setSelectedEvent(event);
       setFormData({
         ...event,
-        startDate: new Date(event.startDate),
-        endDate: new Date(event.endDate)
+        startDate: dayjs(event.startDate),
+        endDate: dayjs(event.endDate),
+        // Ensure sports is always an array
+        sports: Array.isArray(event.sports) ? event.sports : 
+               (typeof event.sports === 'string' ? event.sports.split(',') : [])
       });
     } else {
       setSelectedEvent(null);
@@ -80,22 +90,42 @@ const ManageEvents = () => {
         isActive: true
       });
     }
+    setSportInput('');
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
     setSelectedEvent(null);
+    setError('');
+  };
+
+  const handleAddSport = () => {
+    if (sportInput.trim() !== '') {
+      setFormData({
+        ...formData,
+        sports: [...formData.sports, sportInput.trim()]
+      });
+      setSportInput('');
+    }
+  };
+
+  const handleRemoveSport = (sportToRemove) => {
+    setFormData({
+      ...formData,
+      sports: formData.sports.filter(sport => sport !== sportToRemove)
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Ensure sports field is properly handled - currently empty array
-      // If you have a way to select sports in your form, make sure they're included here
+      // Convert dayjs objects to ISO strings for API submission
       const dataToSend = {
         ...formData,
-        // Set a default sport if empty
+        startDate: formData.startDate ? formData.startDate.toISOString() : null,
+        endDate: formData.endDate ? formData.endDate.toISOString() : null,
+        // Ensure sports is always an array with at least one item
         sports: formData.sports.length ? formData.sports : ['General']
       };
       
@@ -122,7 +152,7 @@ const ManageEvents = () => {
       handleClose();
     } catch (error) {
       console.error('Error saving event:', error);
-      alert(`Failed to save event: ${error.response?.data?.error || error.message}`);
+      setError(error.response?.data?.error || error.message);
     }
   };
 
@@ -200,65 +230,105 @@ const ManageEvents = () => {
         </DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
+            {error && <Box sx={{ color: 'error.main', mb: 2 }}>{error}</Box>}
+            
             <TextField
               fullWidth
               label="Title"
-              value={formData.title}
+              value={formData.title || ''}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               margin="normal"
               required
             />
+            
             <TextField
               fullWidth
               select
               label="Type"
-              value={formData.type}
+              value={formData.type || ''}
               onChange={(e) => setFormData({ ...formData, type: e.target.value })}
               margin="normal"
               required
             >
               <MenuItem value="elevate">ELEVATE</MenuItem>
               <MenuItem value="intra">INTRA</MenuItem>
+              <MenuItem value="tournament">Tournament</MenuItem>
+              <MenuItem value="annual">Annual Event</MenuItem>
               <MenuItem value="external">External</MenuItem>
             </TextField>
 
             {/* Date fields */}
             <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-              <DatePicker
+              <TextField
                 label="Start Date"
-                value={formData.startDate}
-                onChange={(date) => setFormData({ ...formData, startDate: date })}
-                renderInput={(params) => <TextField {...params} fullWidth required />}
+                type="date"
+                fullWidth
+                required
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+                value={formData.startDate ? formData.startDate.format('YYYY-MM-DD') : ''}
+                onChange={(e) => setFormData({ 
+                  ...formData, 
+                  startDate: e.target.value ? dayjs(e.target.value) : null
+                })}
               />
-              <DatePicker
+              <TextField
                 label="End Date"
-                value={formData.endDate}
-                onChange={(date) => setFormData({ ...formData, endDate: date })}
-                renderInput={(params) => <TextField {...params} fullWidth required />}
+                type="date"
+                fullWidth
+                required
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+                value={formData.endDate ? formData.endDate.format('YYYY-MM-DD') : ''}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  endDate: e.target.value ? dayjs(e.target.value) : null
+                })}
               />
             </Box>
 
             <TextField
               fullWidth
               label="Venue"
-              value={formData.venue}
+              value={formData.venue || ''}
               onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
               margin="normal"
               required
             />
 
-            <TextField
-              fullWidth
-              label="Sports"
-              value={formData.sports}
-              onChange={(e) => setFormData({ ...formData, sports: e.target.value })}
-              margin="normal"
-            />
+            {/* Sports field - now handling properly as an array */}
+            <Box sx={{ mt: 2, mb: 2 }}>
+              <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                <TextField
+                  fullWidth
+                  label="Add Sport"
+                  value={sportInput}
+                  onChange={(e) => setSportInput(e.target.value)}
+                  margin="normal"
+                />
+                <Button 
+                  variant="contained" 
+                  onClick={handleAddSport}
+                  sx={{ mt: 2, height: 40 }}
+                >
+                  Add
+                </Button>
+              </Box>
+              <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
+                {(formData.sports || []).map((sport, index) => (
+                  <Chip
+                    key={index}
+                    label={sport}
+                    onDelete={() => handleRemoveSport(sport)}
+                  />
+                ))}
+              </Stack>
+            </Box>
  
             <TextField
               fullWidth
               label="Description"
-              value={formData.description}
+              value={formData.description || ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               margin="normal"
               multiline
@@ -269,7 +339,7 @@ const ManageEvents = () => {
             <TextField
               fullWidth
               label="Brochure URL (Optional)"
-              value={formData.brochureUrl}
+              value={formData.brochureUrl || ''}
               onChange={(e) => setFormData({ ...formData, brochureUrl: e.target.value })}
               margin="normal"
             />
