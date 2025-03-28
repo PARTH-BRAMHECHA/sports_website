@@ -9,6 +9,7 @@ import userRoutes from './routes/user.js';
 import adminRoutes from './routes/admin.js';
 import galleryRoutes from './routes/galleryRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
 import morgan from 'morgan';
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/admin/stats', statsRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Root route
 app.get('/', (req, res) => {

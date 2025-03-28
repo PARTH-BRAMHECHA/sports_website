@@ -29,8 +29,37 @@ const ContactForm = () => {
     message: ''
   });
   const [status, setStatus] = useState({ type: '', message: '' });
+  const [loading, setLoading] = useState(false);
+
+  const validateForm = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9]{10}$/;
+
+    if (!formData.name.trim()) {
+      setStatus({ type: 'error', message: 'Name is required' });
+      return false;
+    }
+    if (!phoneRegex.test(formData.phone)) {
+      setStatus({ type: 'error', message: 'Please enter a valid 10-digit phone number' });
+      return false;
+    }
+    if (!emailRegex.test(formData.email)) {
+      setStatus({ type: 'error', message: 'Please enter a valid email address' });
+      return false;
+    }
+    if (!formData.sport) {
+      setStatus({ type: 'error', message: 'Please select a sport' });
+      return false;
+    }
+    if (!formData.message.trim()) {
+      setStatus({ type: 'error', message: 'Message is required' });
+      return false;
+    }
+    return true;
+  };
 
   const handleChange = (e) => {
+    setStatus({ type: '', message: '' }); // Clear any previous error messages
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -39,39 +68,41 @@ const ContactForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
     try {
-      await axios.post('http://localhost:4000/api/contact', formData);
-      setStatus({
-        type: 'success',
-        message: 'Thank you for your message. We will contact you soon!'
-      });
-      setFormData({
-        name: '',
-        phone: '',
-        email: '',
-        sport: '',
-        message: ''
-      });
+      const response = await axios.post('http://localhost:4000/api/contact', formData);
+      
+      if (response.status === 201) {
+        setStatus({
+          type: 'success',
+          message: 'Thank you for your message. We will contact you soon!'
+        });
+        setFormData({
+          name: '',
+          phone: '',
+          email: '',
+          sport: '',
+          message: ''
+        });
+      }
     } catch (error) {
+      console.error('Contact form submission error:', error);
       setStatus({
         type: 'error',
-        message: 'There was an error sending your message. Please try again.'
+        message: error.response?.data?.message || 'There was an error sending your message. Please try again.'
       });
-    }
-  };
-
-  const fetchData = async () => {
-    try {
-      const { data } = await axios.get('http://localhost:4000/api/contact', {});
-      await axios.patch(`http://localhost:4000/api/contact/${data.id}/read`, {}, {});
-      await axios.delete(`http://localhost:4000/api/contact/${data.id}`, {});
-    } catch (error) {
-      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Box sx={{ my: 4 }}>
+    <Box sx={{ my: 4 }} id="contact">
       <Typography variant="h4" gutterBottom align="center">
         Contact Us
       </Typography>
@@ -90,6 +121,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
+            error={status.type === 'error' && !formData.name}
           />
           <TextField
             fullWidth
@@ -99,6 +131,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
+            error={status.type === 'error' && !formData.phone}
           />
           <TextField
             fullWidth
@@ -109,6 +142,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
+            error={status.type === 'error' && !formData.email}
           />
           <TextField
             fullWidth
@@ -119,6 +153,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
+            error={status.type === 'error' && !formData.sport}
           >
             {sports.map((sport) => (
               <MenuItem key={sport} value={sport}>
@@ -136,14 +171,16 @@ const ContactForm = () => {
             multiline
             rows={4}
             required
+            error={status.type === 'error' && !formData.message}
           />
           <Button
             type="submit"
             variant="contained"
             fullWidth
             sx={{ mt: 2 }}
+            disabled={loading}
           >
-            Send Message
+            {loading ? 'Sending...' : 'Send Message'}
           </Button>
         </form>
       </Paper>

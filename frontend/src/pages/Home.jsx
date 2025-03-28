@@ -67,7 +67,6 @@ const Home = () => {
         {/* Upcoming Events Section */}
         <Box sx={{ mb: 6 }}>
           <Typography variant="h4" gutterBottom align="center">
-            Upcoming Events
           </Typography>
           <UpcomingEventsSlider />
         </Box>

@@ -84,7 +84,6 @@ const UpcomingEventsSlider = () => {
     return (
       <Box sx={{ textAlign: 'center', my: 3 }}>
         <Typography variant="h6" color="textSecondary">
-          No upcoming events
         </Typography>
       </Box>
     );
