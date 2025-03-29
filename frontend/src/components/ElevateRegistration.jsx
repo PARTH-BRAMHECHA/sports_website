@@ -101,7 +101,7 @@ const ElevateRegistration = () => {
     setLoading(true);
 
     try {
-      // Update to use consistent base URL
+      // The correct endpoint path based on the backend route configuration
       await axios.post('http://localhost:4000/api/elevate/register', formData);
       setSnackbar({
         open: true,
@@ -119,9 +119,14 @@ const ElevateRegistration = () => {
         alternateContact: ''
       });
     } catch (error) {
+      console.error('Registration error:', error);
+      const errorMessage = error.response?.data?.message || 
+        error.message || 
+        'Registration failed. Please try again.';
+      
       setSnackbar({
         open: true,
-        message: error.response?.data?.message || 'Registration failed. Please try again.',
+        message: errorMessage,
         severity: 'error'
       });
     } finally {

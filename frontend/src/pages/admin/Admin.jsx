@@ -6,6 +6,7 @@ import ManageEvents from './ManageEvents';
 import ManageAchievements from './ManageAchievements';
 import ManageGallery from './ManageGallery';
 import ContactMessages from './ContactMessages';
+import ManageRegistrations from './ManageRegistrations';
 
 const Admin = () => {
   return (
@@ -16,6 +17,7 @@ const Admin = () => {
           <Routes>
             <Route index element={<Overview />} />
             <Route path="events" element={<ManageEvents />} />
+            <Route path="registrations" element={<ManageRegistrations />} />
             <Route path="achievements" element={<ManageAchievements />} />
             <Route path="gallery" element={<ManageGallery />} />
             <Route path="messages" element={<ContactMessages />} />
@@ -26,4 +28,4 @@ const Admin = () => {
   );
 };
 
-export default Admin; 
+export default Admin;

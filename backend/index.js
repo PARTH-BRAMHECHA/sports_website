@@ -10,6 +10,7 @@ import adminRoutes from './routes/admin.js';
 import galleryRoutes from './routes/galleryRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
+import registrationRoutes from './routes/registrationRoutes.js';
 import morgan from 'morgan';
 
 dotenv.config();
@@ -41,6 +42,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/admin/stats', statsRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/elevate', registrationRoutes);
 
 // Root route
 app.get('/', (req, res) => {
