@@ -17,7 +17,9 @@ import {
   DialogActions,
   Button,
   Chip,
-  TablePagination
+  TablePagination,
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -32,6 +34,8 @@ const ContactMessages = () => {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -40,12 +44,17 @@ const ContactMessages = () => {
 
   const fetchMessages = async () => {
     try {
-      const { data } = await axios.get('http://localhost:4000/api/contact', {
+      setLoading(true);
+      setError(null);
+      const response = await axios.get('http://localhost:4000/api/contact', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
-      setMessages(data);
+      setMessages(response.data);
     } catch (error) {
       console.error('Error fetching messages:', error);
+      setError('Failed to load contact messages. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,6 +70,7 @@ const ContactMessages = () => {
       fetchMessages();
     } catch (error) {
       console.error('Error marking message as read:', error);
+      setError('Failed to mark message as read. Please try again.');
     }
   };
 
@@ -73,6 +83,7 @@ const ContactMessages = () => {
         fetchMessages();
       } catch (error) {
         console.error('Error deleting message:', error);
+        setError('Failed to delete message. Please try again.');
       }
     }
   };
@@ -86,69 +97,95 @@ const ContactMessages = () => {
     setPage(0);
   };
 
+  const isMessageRead = (message) => {
+    return message.status === 'read' || message.status === 'responded';
+  };
+
+  if (loading) {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4, textAlign: 'center' }}>
+        <CircularProgress />
+        <Typography sx={{ mt: 2 }}>Loading messages...</Typography>
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" gutterBottom>
         Contact Messages
       </Typography>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Sport</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {messages
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((message) => (
-                <TableRow key={message._id}>
-                  <TableCell>
-                    {new Date(message.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>{message.name}</TableCell>
-                  <TableCell>{message.sport}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={message.read ? 'Read' : 'Unread'}
-                      color={message.read ? 'default' : 'primary'}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => setSelectedMessage(message)}>
-                      <VisibilityIcon />
-                    </IconButton>
-                    {!message.read && (
-                      <IconButton onClick={() => handleMarkAsRead(message._id)}>
-                        <MarkEmailReadIcon />
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
+
+      {messages.length === 0 ? (
+        <Paper sx={{ p: 3, textAlign: 'center' }}>
+          <Typography>No contact messages found.</Typography>
+        </Paper>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Date</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Sport</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {messages
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((message) => (
+                  <TableRow key={message._id}>
+                    <TableCell>
+                      {new Date(message.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>{message.name}</TableCell>
+                    <TableCell>{message.sport}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={isMessageRead(message) ? 'Read' : 'Unread'}
+                        color={isMessageRead(message) ? 'default' : 'primary'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => setSelectedMessage(message)}>
+                        <VisibilityIcon />
                       </IconButton>
-                    )}
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDelete(message._id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-        <TablePagination
-          component="div"
-          count={messages.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
+                      {!isMessageRead(message) && (
+                        <IconButton onClick={() => handleMarkAsRead(message._id)}>
+                          <MarkEmailReadIcon />
+                        </IconButton>
+                      )}
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDelete(message._id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+          <TablePagination
+            component="div"
+            count={messages.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+          />
+        </TableContainer>
+      )}
 
       <Dialog
         open={!!selectedMessage}
@@ -174,6 +211,10 @@ const ContactMessages = () => {
             <Typography variant="subtitle2" gutterBottom>
               Date: {new Date(selectedMessage.createdAt).toLocaleString()}
             </Typography>
+            <Typography variant="subtitle2" gutterBottom>
+              Status: {selectedMessage.status === 'new' ? 'Unread' : 
+                      selectedMessage.status === 'responded' ? 'Responded' : 'Read'}
+            </Typography>
             <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
               Message:
             </Typography>
@@ -184,13 +225,14 @@ const ContactMessages = () => {
         )}
         <DialogActions>
           <Button onClick={() => setSelectedMessage(null)}>Close</Button>
-          {selectedMessage && !selectedMessage.read && (
+          {selectedMessage && !isMessageRead(selectedMessage) && (
             <Button
               onClick={() => {
                 handleMarkAsRead(selectedMessage._id);
                 setSelectedMessage(null);
               }}
               color="primary"
+              variant="contained"
             >
               Mark as Read
             </Button>
