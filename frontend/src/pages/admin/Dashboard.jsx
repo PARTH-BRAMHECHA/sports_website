@@ -16,7 +16,8 @@ import {
   EmojiEvents,
   PhotoLibrary,
   Mail,
-  Dashboard as DashboardIcon
+  Dashboard as DashboardIcon,
+  Schedule
 } from '@mui/icons-material';
 import { Link, Outlet } from 'react-router-dom';
 
@@ -24,6 +25,7 @@ const Dashboard = () => {
   const menuItems = [
     { text: 'Overview', icon: <DashboardIcon />, path: '/admin' },
     { text: 'Manage Events', icon: <Event />, path: '/admin/events' },
+    { text: 'Manage Schedule', icon: <Schedule />, path: '/admin/schedule' },
     { text: 'Manage Achievements', icon: <EmojiEvents />, path: '/admin/achievements' },
     { text: 'Manage Gallery', icon: <PhotoLibrary />, path: '/admin/gallery' },
     { text: 'Contact Messages', icon: <Mail />, path: '/admin/messages' }
@@ -74,4 +76,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

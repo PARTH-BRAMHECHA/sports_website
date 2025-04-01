@@ -14,7 +14,8 @@ import {
   EmojiEvents,
   PhotoLibrary,
   Message,
-  GroupAdd
+  GroupAdd,
+  Schedule
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -23,6 +24,7 @@ const drawerWidth = 240;
 const menuItems = [
   { text: 'Overview', icon: <Dashboard />, path: '/admin' },
   { text: 'Events', icon: <Event />, path: '/admin/events' },
+  { text: 'Schedule', icon: <Schedule />, path: '/admin/schedule' },
   { text: 'Registrations', icon: <GroupAdd />, path: '/admin/registrations' },
   { text: 'Achievements', icon: <EmojiEvents />, path: '/admin/achievements' },
   { text: 'Gallery', icon: <PhotoLibrary />, path: '/admin/gallery' },
@@ -63,6 +65,7 @@ const AdminSidebar = () => {
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
+
       </List>
     </Drawer>
   );

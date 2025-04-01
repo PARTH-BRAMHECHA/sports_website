@@ -1,7 +1,15 @@
 import express from 'express';
 import { verifyAdmin } from '../middleware/authMiddleware.js';
 import { Event } from '../models/Event.js';
-import { Achievement,Gallery } from '../models/User.js';
+import { Achievement, Gallery } from '../models/User.js';
+import { 
+  getAllSchedules, 
+  getScheduleById, 
+  getScheduleByEventId, 
+  createSchedule, 
+  updateSchedule, 
+  deleteSchedule 
+} from '../controllers/scheduleController.js';
 
 import multer from 'multer'; 
 
@@ -33,6 +41,31 @@ router.post('/events', verifyAdmin, async (req, res) => {
   }
 });
 
+// Schedule routes
+router.get('/schedules', async (req, res) => {
+  await getAllSchedules(req, res);
+});
+
+router.get('/schedules/:id', async (req, res) => {
+  await getScheduleById(req, res);
+});
+
+router.get('/schedules/event/:eventId', async (req, res) => {
+  await getScheduleByEventId(req, res);
+});
+
+router.post('/schedules', verifyAdmin, async (req, res) => {
+  await createSchedule(req, res);
+});
+
+router.put('/schedules/:id', verifyAdmin, async (req, res) => {
+  await updateSchedule(req, res);
+});
+
+router.delete('/schedules/:id', verifyAdmin, async (req, res) => {
+  await deleteSchedule(req, res);
+});
+
 router.post('/achievements', verifyAdmin, async (req, res) => {
   try {
     console.log('Creating achievements:', req.body);
@@ -45,7 +78,6 @@ router.post('/achievements', verifyAdmin, async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-
 
 // Upload Image Route
 router.post('/gallery', verifyAdmin, upload.single('image'), async (req, res) => {

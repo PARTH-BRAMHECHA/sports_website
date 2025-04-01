@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -11,10 +11,13 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Chip
+  Chip,
+  CircularProgress
 } from '@mui/material';
+import axios from 'axios';
 
-const schedule = {
+// Fallback data in case API call fails
+const fallbackSchedule = {
   'Day 1': [
     {
       time: '08:00 AM',
@@ -109,6 +112,41 @@ const schedule = {
 
 const ElevateSchedule = () => {
   const [selectedDay, setSelectedDay] = useState(0);
+  const [schedule, setSchedule] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        setLoading(true);
+        // Use the public API endpoint instead of the admin one
+        const response = await axios.get('http://localhost:4000/api/schedules');
+        console.log('Schedule API response:', response.data);
+        
+        if (response.data && response.data.length > 0) {
+          // Transform the data to match our component's format
+          const transformedData = {};
+          response.data[0].days.forEach(day => {
+            transformedData[day.dayName] = day.events;
+          });
+          setSchedule(transformedData);
+        } else {
+          console.log('No schedule data found, using fallback data');
+          setSchedule(fallbackSchedule);
+        }
+      } catch (err) {
+        console.error('Error fetching schedule:', err);
+        setError('Failed to load schedule data');
+        console.log('Using fallback schedule data due to error');
+        setSchedule(fallbackSchedule);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSchedule();
+  }, []);
 
   const handleChange = (event, newValue) => {
     setSelectedDay(newValue);
@@ -127,11 +165,33 @@ const ElevateSchedule = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!schedule) {
+    return (
+      <Box sx={{ textAlign: 'center', my: 4 }}>
+        <Typography color="error">No schedule data available</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box id="schedule" sx={{ width: '100%', mb: 6 }}>
       <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
         Event Schedule
       </Typography>
+      
+      {error && (
+        <Typography color="error" align="center" sx={{ mb: 2 }}>
+          {error}
+        </Typography>
+      )}
       
       <Paper sx={{ width: '100%', mb: 2 }}>
         <Tabs
@@ -190,4 +250,4 @@ const ElevateSchedule = () => {
   );
 };
 
-export default ElevateSchedule; 
+export default ElevateSchedule;
