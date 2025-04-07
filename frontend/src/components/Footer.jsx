@@ -82,7 +82,7 @@ const Footer = () => {
 
         <Box sx={{ mt: 3, textAlign: 'center' }}>
           <Typography variant="body2">
-            © {new Date().getFullYear()} PICT Sports Department. All rights reserved.
+            © {new Date().getFullYear()} Department of Physical Education & Sports . All rights reserved.
           </Typography>
         </Box>
       </Container>

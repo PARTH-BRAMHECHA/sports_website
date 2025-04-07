@@ -46,7 +46,7 @@ const Home = () => {
             color="inherit"
             gutterBottom
           >
-            PICT Sports Department
+            Department of Physical Education & Sports 
           </Typography>
           <Typography variant="h5" color="inherit" paragraph>
             Nurturing Champions, Building Character Through Sports Excellence

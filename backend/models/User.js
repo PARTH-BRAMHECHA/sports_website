@@ -112,7 +112,7 @@ const achievementSchema = new mongoose.Schema({
     trim: true
   },
   year: {
-    type: Number,
+    type: String,  // Changed from Number to String for consistent filtering
     required: true
   },
   category: {

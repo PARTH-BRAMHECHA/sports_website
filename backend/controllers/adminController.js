@@ -6,7 +6,13 @@ import { Event } from '../models/Event.js';
 // Add a new achievement
 export const addAchievement = async (req, res) => {
   try {
-    const achievement = new Achievement(req.body);
+    // Ensure year is stored as a string for consistent filtering
+    const achievementData = {
+      ...req.body,
+      year: req.body.year.toString()
+    };
+    
+    const achievement = new Achievement(achievementData);
     await achievement.save();
     res.status(201).json({ message: 'Achievement added successfully', achievement });
   } catch (error) {
@@ -18,7 +24,14 @@ export const addAchievement = async (req, res) => {
 export const updateAchievement = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedAchievement = await Achievement.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+    
+    // Ensure year is stored as a string for consistent filtering
+    const updateData = {
+      ...req.body,
+      year: req.body.year.toString()
+    };
+    
+    const updatedAchievement = await Achievement.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
     if (!updatedAchievement) {
       return res.status(404).json({ message: 'Achievement not found' });
     }

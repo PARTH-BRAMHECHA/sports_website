@@ -15,13 +15,147 @@ import {
   Chip,
   Stack,
   Paper,
-  CircularProgress
+  CircularProgress,
+  ButtonGroup,
+  Button
 } from '@mui/material';
 import { EmojiEvents, Groups, Person } from '@mui/icons-material';
 import CountUp from 'react-countup';
 import axios from 'axios';
 
-
+// Static achievements data including data for 2025
+const staticAchievements = [
+  {
+    level: "Khelo India",
+    achievements: [
+      {
+        sport: "Basketball",
+        type: "team",
+        studentName: "",
+        position: "Champions",
+        year: "2025"
+      },
+      {
+        sport: "Athletics",
+        type: "individual",
+        studentName: "Rahul Sharma",
+        position: "Gold Medal - 100m Sprint",
+        year: "2025"
+      },
+      {
+        sport: "Table Tennis",
+        type: "individual",
+        studentName: "Priya Patel",
+        position: "Silver Medal",
+        year: "2025"
+      }
+    ]
+  },
+  {
+    level: "All India Inter University",
+    achievements: [
+      {
+        sport: "Chess",
+        type: "individual",
+        studentName: "Aditya Kumar",
+        position: "Champion",
+        year: "2025"
+      },
+      {
+        sport: "Cricket",
+        type: "team",
+        studentName: "",
+        position: "Runners Up",
+        year: "2025"
+      },
+      {
+        sport: "Volleyball",
+        type: "team",
+        studentName: "",
+        position: "Semi-Finalists",
+        year: "2025"
+      }
+    ]
+  },
+  {
+    level: "Southwest Zone",
+    achievements: [
+      {
+        sport: "Basketball",
+        type: "individual",
+        studentName: "Ramesh Joshi",
+        position: "Best Player",
+        year: "2025"
+      },
+      {
+        sport: "Table Tennis",
+        type: "team",
+        studentName: "",
+        position: "Champions",
+        year: "2025"
+      },
+      {
+        sport: "Athletics",
+        type: "individual",
+        studentName: "Anjali Singh",
+        position: "Gold Medal - Long Jump",
+        year: "2025"
+      }
+    ]
+  },
+  {
+    level: "Division Level",
+    achievements: [
+      {
+        sport: "Carrom",
+        type: "individual",
+        studentName: "Suresh Desai",
+        position: "Champion",
+        year: "2025"
+      },
+      {
+        sport: "Volleyball",
+        type: "individual",
+        studentName: "Kavita Patil",
+        position: "Best Spiker",
+        year: "2025"
+      },
+      {
+        sport: "Cricket",
+        type: "individual",
+        studentName: "Ravi Verma",
+        position: "Best Bowler",
+        year: "2025"
+      }
+    ]
+  },
+  {
+    level: "City Level",
+    achievements: [
+      {
+        sport: "Athletics",
+        type: "team",
+        studentName: "",
+        position: "Overall Champions",
+        year: "2025"
+      },
+      {
+        sport: "Chess",
+        type: "individual",
+        studentName: "Neha Gupta",
+        position: "Champion",
+        year: "2025"
+      },
+      {
+        sport: "Basketball",
+        type: "team",
+        studentName: "",
+        position: "Champions",
+        year: "2025"
+      }
+    ]
+  }
+];
 
 const AchievementCard = ({ level, achievements, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
@@ -226,7 +360,9 @@ const StatsBar = ({ achievements }) => {
 
 const Achievements = () => {
   const [achievementsData, setAchievementsData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
     const fetchAchievements = async () => {
@@ -238,13 +374,16 @@ const Achievements = () => {
           // Format data from API to match component structure
           const formattedData = formatAchievementsData(data);
           setAchievementsData(formattedData);
+          setFilteredData(formattedData);
         } else {
           // Fallback to static data if API returns empty
           setAchievementsData(staticAchievements);
+          setFilteredData(staticAchievements);
         }
       } catch (error) {
         console.error('Error fetching achievements:', error);
         setAchievementsData(staticAchievements);
+        setFilteredData(staticAchievements);
       } finally {
         setLoading(false);
       }
@@ -252,6 +391,24 @@ const Achievements = () => {
     
     fetchAchievements();
   }, []);
+
+  // Filter achievements by year
+  useEffect(() => {
+    if (achievementsData.length === 0) return;
+
+    const filteredByYear = achievementsData.map(category => {
+      const filteredAchievements = category.achievements.filter(
+        achievement => achievement.year === selectedYear.toString()
+      );
+      
+      return {
+        ...category,
+        achievements: filteredAchievements
+      };
+    }).filter(category => category.achievements.length > 0);
+    
+    setFilteredData(filteredByYear);
+  }, [selectedYear, achievementsData]);
 
   // Format data from API to match the component structure
   const formatAchievementsData = (achievements) => {
@@ -310,17 +467,61 @@ const Achievements = () => {
       }}
     >
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        <Typography variant="h3" gutterBottom align="center" sx={{ mb: 6, color: 'white' }}>
+        <Typography variant="h3" gutterBottom align="center" sx={{ mb: 4, color: 'white' }}>
           Our Achievements
         </Typography>
+        
+        {/* Year Filter Buttons */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+          <ButtonGroup 
+            variant="contained" 
+            color="primary" 
+            size="large"
+            sx={{ 
+              backgroundColor: 'rgba(0, 0, 0, 0.6)',
+              '& .MuiButton-root': {
+                px: 3,
+                fontWeight: 'bold',
+                '&.selected': {
+                  backgroundColor: '#f50057',
+                }
+              }
+            }}
+          >
+            <Button 
+              className={selectedYear === 2023 ? 'selected' : ''} 
+              onClick={() => setSelectedYear(2023)}
+            >
+              2023
+            </Button>
+            <Button 
+              className={selectedYear === 2024 ? 'selected' : ''} 
+              onClick={() => setSelectedYear(2024)}
+            >
+              2024
+            </Button>
+            <Button 
+              className={selectedYear === 2025 ? 'selected' : ''} 
+              onClick={() => setSelectedYear(2025)}
+            >
+              2025
+            </Button>
+          </ButtonGroup>
+        </Box>
 
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 5 }}>
             <CircularProgress sx={{ color: 'white' }} />
           </Box>
+        ) : filteredData.length === 0 ? (
+          <Box sx={{ textAlign: 'center', my: 5 }}>
+            <Typography variant="h5" sx={{ color: 'white' }}>
+              No achievements found for {selectedYear}
+            </Typography>
+          </Box>
         ) : (
           <Grid container spacing={4}>
-            {achievementsData.map((category) => (
+            {filteredData.map((category) => (
               <Grid item xs={12} md={6} key={category.level}>
                 <AchievementCard 
                   level={category.level} 
@@ -340,7 +541,7 @@ const Achievements = () => {
         )}
         
         {/* Stats Bar */}
-        {!loading && <StatsBar achievements={achievementsData} />}
+        {!loading && <StatsBar achievements={filteredData} />}
       </Container>
     </Box>
   );
