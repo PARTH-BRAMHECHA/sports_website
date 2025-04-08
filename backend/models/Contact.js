@@ -25,6 +25,16 @@ const ContactSchema = new mongoose.Schema(
       required: [true, 'Please select a sport interest'],
       trim: true
     },
+    prnNumber: {
+      type: String,
+      required: [true, 'Please provide your PRN number'],
+      trim: true
+    },
+    enrollmentNumber: {
+      type: String,
+      required: [true, 'Please provide your enrollment number'],
+      trim: true
+    },
     message: {
       type: String,
       required: [true, 'Please provide a message'],

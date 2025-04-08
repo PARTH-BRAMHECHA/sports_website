@@ -3,10 +3,10 @@ import Contact from '../models/Contact.js';
 // Create a new contact form submission
 export const createContact = async (req, res) => {
   try {
-    const { name, email, phone, sport, message } = req.body;
+    const { name, email, phone, sport, prnNumber, enrollmentNumber, message } = req.body;
 
     // Validate required fields
-    if (!name || !email || !phone || !sport || !message) {
+    if (!name || !email || !phone || !sport || !prnNumber || !enrollmentNumber || !message) {
       return res.status(400).json({
         success: false,
         message: 'Please provide all required fields'
@@ -19,6 +19,8 @@ export const createContact = async (req, res) => {
       email,
       phone,
       sport,
+      prnNumber,
+      enrollmentNumber,
       message
     });
 

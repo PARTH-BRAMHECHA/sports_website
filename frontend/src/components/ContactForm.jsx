@@ -26,6 +26,8 @@ const ContactForm = () => {
     phone: '',
     email: '',
     sport: '',
+    prnNumber: '',
+    enrollmentNumber: '',
     message: ''
   });
   const [status, setStatus] = useState({ type: '', message: '' });
@@ -49,6 +51,14 @@ const ContactForm = () => {
     }
     if (!formData.sport) {
       setStatus({ type: 'error', message: 'Please select a sport' });
+      return false;
+    }
+    if (!formData.prnNumber.trim()) {
+      setStatus({ type: 'error', message: 'PRN number is required' });
+      return false;
+    }
+    if (!formData.enrollmentNumber.trim()) {
+      setStatus({ type: 'error', message: 'Enrollment number is required' });
       return false;
     }
     if (!formData.message.trim()) {
@@ -87,6 +97,8 @@ const ContactForm = () => {
           phone: '',
           email: '',
           sport: '',
+          prnNumber: '',
+          enrollmentNumber: '',
           message: ''
         });
       }
@@ -104,7 +116,7 @@ const ContactForm = () => {
   return (
     <Box sx={{ my: 4 }} id="contact">
       <Typography variant="h4" gutterBottom align="center">
-        Contact Us
+        Show Your Interest
       </Typography>
       <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
         {status.message && (
@@ -143,6 +155,26 @@ const ContactForm = () => {
             margin="normal"
             required
             error={status.type === 'error' && !formData.email}
+          />
+          <TextField
+            fullWidth
+            label="PRN Number"
+            name="prnNumber"
+            value={formData.prnNumber}
+            onChange={handleChange}
+            margin="normal"
+            required
+            error={status.type === 'error' && !formData.prnNumber}
+          />
+          <TextField
+            fullWidth
+            label="Enrollment Number"
+            name="enrollmentNumber"
+            value={formData.enrollmentNumber}
+            onChange={handleChange}
+            margin="normal"
+            required
+            error={status.type === 'error' && !formData.enrollmentNumber}
           />
           <TextField
             fullWidth
