@@ -15,7 +15,8 @@ import {
   PhotoLibrary,
   Message,
   GroupAdd,
-  Schedule
+  Schedule,
+  Settings
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -28,7 +29,8 @@ const menuItems = [
   { text: 'Registrations', icon: <GroupAdd />, path: '/admin/registrations' },
   { text: 'Achievements', icon: <EmojiEvents />, path: '/admin/achievements' },
   { text: 'Gallery', icon: <PhotoLibrary />, path: '/admin/gallery' },
-  { text: 'Messages', icon: <Message />, path: '/admin/messages' }
+  { text: 'Messages', icon: <Message />, path: '/admin/messages' },
+  { text: 'Settings', icon: <Settings />, path: '/admin/settings' }
 ];
 
 const AdminSidebar = () => {

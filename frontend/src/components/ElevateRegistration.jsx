@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -35,6 +35,8 @@ const ElevateRegistration = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [fetchingSettings, setFetchingSettings] = useState(true);
+  const [registrationEnabled, setRegistrationEnabled] = useState(true);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -42,6 +44,24 @@ const ElevateRegistration = () => {
   });
 
   const [errors, setErrors] = useState({});
+  
+  useEffect(() => {
+    const fetchRegistrationStatus = async () => {
+      try {
+        setFetchingSettings(true);
+        const response = await axios.get('http://localhost:4000/api/settings/registration-status');
+        setRegistrationEnabled(response.data.registrationEnabled);
+      } catch (error) {
+        console.error('Error fetching registration status:', error);
+        // Default to enabled if there's an error fetching the status
+        setRegistrationEnabled(true);
+      } finally {
+        setFetchingSettings(false);
+      }
+    };
+    
+    fetchRegistrationStatus();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,9 +110,17 @@ const ElevateRegistration = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!registrationEnabled) {
+      setSnackbar({
+        open: true,
+        message: 'Registration is currently closed. Please check back later.',
+        severity: 'error'
+      });
+      return;
+    }
     
     if (!validateForm()) {
       return;
@@ -133,16 +161,28 @@ const ElevateRegistration = () => {
       setLoading(false);
     }
   };
-
   return (
     <Box id="register">
       <Paper elevation={3} sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
         <Typography variant="h5" gutterBottom align="center">
           Team Registration
         </Typography>
-        <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 4 }}>
-          Register your team for ELEVATE 2024 before February 28, 2024
-        </Typography>
+        
+        {fetchingSettings ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : !registrationEnabled ? (
+          <Alert severity="info" sx={{ mb: 4 }}>
+            <Typography variant="body1" align="center">
+              Registration is currently closed. Please check back later or contact us for more information.
+            </Typography>
+          </Alert>
+        ) : (
+          <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 4 }}>
+            Register your team for ELEVATE 2024 before February 28, 2024
+          </Typography>
+        )}
 
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>

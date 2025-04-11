@@ -12,6 +12,8 @@ import statsRoutes from './routes/statsRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import registrationRoutes from './routes/registrationRoutes.js';
 import scheduleRoutes from './routes/scheduleRoutes.js';
+import settingsRoutes from './routes/settingsRoutes.js';
+import adminSettingsRoutes from './routes/adminSettingsRoutes.js';
 import morgan from 'morgan';
 
 dotenv.config();
@@ -45,6 +47,8 @@ app.use('/api/admin/stats', statsRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/elevate', registrationRoutes);
 app.use('/api/schedules', scheduleRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/admin', adminSettingsRoutes);
 
 // Root route
 app.get('/', (req, res) => {
