@@ -1,29 +1,30 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { CssBaseline, CircularProgress, Box } from '@mui/material';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import SportsCalendar from './pages/SportsCalendar';
-import Achievements from './pages/Achievements';
-import Elevate from './pages/Elevate';
-import Gallery from './pages/Gallery';
-import UpcomingEvents from './pages/UpcomingEvents';
-import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import Admin from './pages/admin/Admin';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { CssBaseline, CircularProgress, Box } from "@mui/material";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import GoogleCalendar from "./components/GoogleCalendar";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import SportsCalendar from "./pages/SportsCalendar";
+import Achievements from "./pages/Achievements";
+import Elevate from "./pages/Elevate";
+import Gallery from "./pages/Gallery";
+import UpcomingEvents from "./pages/UpcomingEvents";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import Admin from "./pages/admin/Admin";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: "#1976d2",
     },
     secondary: {
-      main: '#dc004e',
+      main: "#dc004e",
     },
   },
 });
@@ -33,7 +34,13 @@ const AppContent = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}>
         <CircularProgress />
       </Box>
     );
@@ -43,7 +50,7 @@ const AppContent = () => {
     <>
       <CssBaseline />
       <Navbar />
-      <Box sx={{ minHeight: '100vh', paddingTop: '64px' }}>
+      <Box sx={{ minHeight: "100vh", paddingTop: "64px" }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -61,8 +68,9 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-        </Routes>
+        </Routes>{" "}
       </Box>
+      <GoogleCalendar />
       <Footer />
     </>
   );
@@ -82,4 +90,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;
