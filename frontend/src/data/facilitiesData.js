@@ -1,9 +1,9 @@
 const facilitiesData = [
   {
     id: 1,
-    name: "Cricket Ground",
-    description: " Well-maintained pitch and practice nets",
-    image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&h=600"
+    name: "Cricket Net",
+    description: " Well-maintained practice nets",
+    image: "./images/Cricket_Net.jpg"
   },
   {
     id: 2,
