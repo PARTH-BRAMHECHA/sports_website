@@ -48,6 +48,8 @@ const StyledEventCard = styled(Card)(({ theme }) => ({
   border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
   backgroundColor: alpha(theme.palette.background.paper, 0.9),
   boxShadow: "0 10px 30px -10px rgba(0,0,0,0.1)",
+  height: "auto",
+  minHeight: "320px",
   "&:hover": {
     boxShadow: "0 16px 40px -12.125px rgba(0,0,0,0.25)",
   },
@@ -83,31 +85,6 @@ const EventHeader = styled(Box)(({ theme, eventType }) => {
       width: "100%",
       height: "140px",
       position: "relative",
-    },
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      opacity: 0.2,
-      background:
-        eventType === "elevate"
-          ? `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23${color.slice(
-              1
-            )}' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          : eventType === "tournament"
-          ? `url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 16c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm0-2c3.314 0 6-2.686 6-6s-2.686-6-6-6-6 2.686-6 6 2.686 6 6 6zm33.414-6l5.95-5.95L45.95.636 40 6.586 34.05.636 32.636 2.05 38.586 8l-5.95 5.95 1.414 1.414L40 9.414l5.95 5.95 1.414-1.414L41.414 8zM40 48c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm0-2c3.314 0 6-2.686 6-6s-2.686-6-6-6-6 2.686-6 6 2.686 6 6 6zM9.414 40l5.95-5.95-1.414-1.414L8 38.586l-5.95-5.95L.636 34.05 6.586 40l-5.95 5.95 1.414 1.414L8 41.414l5.95 5.95 1.414-1.414L9.414 40z' fill='%23${color.slice(
-              1
-            )}' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E")`
-          : eventType === "intra"
-          ? `url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23${color.slice(
-              1
-            )}' fill-opacity='0.2'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          : `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23${color.slice(
-              1
-            )}' fill-opacity='0.2' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E")`,
     },
   };
 });
@@ -164,6 +141,18 @@ const DateChip = styled(Box)(({ theme, eventType }) => {
     borderLeft: `4px solid ${color}`,
     transition: "all 0.3s ease",
     marginTop: theme.spacing(2),
+    animation: "float 4s ease-in-out infinite",
+    "@keyframes float": {
+      "0%": {
+        transform: "translateY(0)",
+      },
+      "50%": {
+        transform: "translateY(-5px)",
+      },
+      "100%": {
+        transform: "translateY(0)",
+      },
+    },
     "&:hover": {
       transform: "scale(1.05)",
       boxShadow: `0 6px 18px ${alpha(color, 0.6)}`,
@@ -172,10 +161,10 @@ const DateChip = styled(Box)(({ theme, eventType }) => {
 });
 
 const StyledCardContent = styled(CardContent)(({ theme }) => ({
-  paddingLeft: "33%", // To accommodate the side header
-  paddingRight: theme.spacing(4),
-  paddingTop: theme.spacing(3),
-  paddingBottom: theme.spacing(3),
+  paddingLeft: "33%",
+  paddingRight: theme.spacing(2),
+  paddingTop: theme.spacing(1.5),
+  paddingBottom: theme.spacing(1.5),
   "@media (max-width: 900px)": {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
@@ -234,15 +223,16 @@ const UpcomingEventsSlider = () => {
   useEffect(() => {
     fetchEvents();
 
-    // Auto-advance slider every 7 seconds
+    // Auto-advance slider every 3 seconds
     const interval = setInterval(() => {
       if (filteredEvents.length > 1) {
         handleNext();
       }
-    }, 7000);
+    }, 3000);
 
+    // Cleanup interval on component unmount
     return () => clearInterval(interval);
-  }, []);
+  }, [filteredEvents.length]);
 
   // Update filtered events when tab changes or events are loaded
   useEffect(() => {
@@ -468,25 +458,6 @@ const UpcomingEventsSlider = () => {
             }}>
             {tabValue === 0 ? "Upcoming Events" : "Recent Events"}
           </Typography>
-          <Button
-            size="small"
-            color="primary"
-            variant="outlined"
-            endIcon={<ChevronRight />}
-            onClick={() => navigate("/upcoming-events")}
-            sx={{
-              fontWeight: 600,
-              borderRadius: "20px",
-              textTransform: "none",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-              transition: "all 0.2s ease",
-              "&:hover": {
-                transform: "translateY(-2px)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-              },
-            }}>
-            View all events
-          </Button>
         </Box>
         <Tabs
           value={tabValue}
@@ -531,12 +502,9 @@ const UpcomingEventsSlider = () => {
               onClick={handlePrevious}
               sx={{
                 position: "absolute",
-                left: { xs: 8, md: "32%" },
-                top: { xs: "140px", md: "50%" },
-                transform: {
-                  xs: "none",
-                  md: "translateY(-50%) translateX(-50%)",
-                },
+                left: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
                 bgcolor: "background.paper",
                 boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
                 zIndex: 5,
@@ -544,10 +512,7 @@ const UpcomingEventsSlider = () => {
                 height: "40px",
                 "&:hover": {
                   bgcolor: "background.paper",
-                  transform: {
-                    xs: "scale(1.1)",
-                    md: "translateY(-50%) translateX(-50%) scale(1.1)",
-                  },
+                  transform: "translateY(-50%) scale(1.1)",
                 },
                 transition: "all 0.2s ease",
               }}>
@@ -558,9 +523,9 @@ const UpcomingEventsSlider = () => {
               onClick={handleNext}
               sx={{
                 position: "absolute",
-                right: 16,
-                top: { xs: "140px", md: "50%" },
-                transform: { xs: "none", md: "translateY(-50%)" },
+                right: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
                 bgcolor: "background.paper",
                 boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
                 zIndex: 5,
@@ -568,10 +533,7 @@ const UpcomingEventsSlider = () => {
                 height: "40px",
                 "&:hover": {
                   bgcolor: "background.paper",
-                  transform: {
-                    xs: "scale(1.1)",
-                    md: "translateY(-50%) scale(1.1)",
-                  },
+                  transform: "translateY(-50%) scale(1.1)",
                 },
                 transition: "all 0.2s ease",
               }}>
@@ -582,12 +544,6 @@ const UpcomingEventsSlider = () => {
 
         {/* Side header with pattern and icon */}
         <EventHeader eventType={filteredEvents[currentIndex]?.type}>
-          {filteredEvents[currentIndex]?.sports && (
-            <SportIconWrapper>
-              {getSportIcon(filteredEvents[currentIndex].sports[0])}
-            </SportIconWrapper>
-          )}
-
           <DateChip eventType={filteredEvents[currentIndex]?.type}>
             <Typography variant="caption" fontWeight={600}>
               {new Date(
@@ -672,6 +628,7 @@ const UpcomingEventsSlider = () => {
               lineHeight: 1.2,
               mb: 2,
               position: "relative",
+              color: (theme) => theme.palette.success.main,
               "&::after": {
                 content: '""',
                 position: "absolute",
@@ -679,13 +636,7 @@ const UpcomingEventsSlider = () => {
                 left: 0,
                 width: "60px",
                 height: "3px",
-                backgroundColor: (theme) =>
-                  getEventTypeColor(filteredEvents[currentIndex]?.type) ===
-                  "default"
-                    ? theme.palette.primary.main
-                    : theme.palette[
-                        getEventTypeColor(filteredEvents[currentIndex]?.type)
-                      ].main,
+                backgroundColor: (theme) => theme.palette.success.main,
                 borderRadius: "2px",
               },
             }}>
@@ -697,11 +648,11 @@ const UpcomingEventsSlider = () => {
             paragraph
             sx={{
               textAlign: "left",
-              fontSize: "1.05rem",
-              lineHeight: 1.6,
+              fontSize: "1rem",
+              lineHeight: 1.4,
               color: alpha(theme.palette.text.primary, 0.85),
-              mb: 3,
-              maxHeight: "7.8rem",
+              mb: 1.5,
+              maxHeight: "4.5rem",
               overflow: "hidden",
               display: "-webkit-box",
               WebkitLineClamp: 3,
@@ -710,7 +661,7 @@ const UpcomingEventsSlider = () => {
             {filteredEvents[currentIndex].description}
           </Typography>
 
-          <Grid container spacing={3} sx={{ mb: 2 }}>
+          <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
             <Grid item xs={12} sm={6}>
               <Paper
                 elevation={0}
@@ -778,50 +729,35 @@ const UpcomingEventsSlider = () => {
             </Grid>
           </Grid>
 
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            {filteredEvents[currentIndex].sports &&
-              filteredEvents[currentIndex].sports.map((sport) => (
-                <Chip
-                  key={sport}
-                  label={sport}
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    backgroundColor: alpha(theme.palette.primary.light, 0.08),
-                    color: theme.palette.primary.main,
-                    fontWeight: 500,
-                    border: `1px solid ${alpha(
-                      theme.palette.primary.main,
-                      0.2
-                    )}`,
-                    transition: "all 0.2s ease",
-                    "&:hover": {
-                      backgroundColor: alpha(theme.palette.primary.light, 0.15),
-                      transform: "scale(1.05)",
-                    },
-                  }}
-                />
-              ))}
-          </Box>
-
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              size="small"
-              onClick={() => navigate("/upcoming-events")}
-              endIcon={<ChevronRight />}
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontWeight: 600,
-                transition: "all 0.2s ease",
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                },
-              }}>
-              View details
-            </Button>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1, flexWrap: "wrap" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ fontWeight: 500, fontSize: "0.75rem" }}>
+              Sports:
+            </Typography>
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+              {filteredEvents[currentIndex].sports &&
+                filteredEvents[currentIndex].sports.map((sport) => (
+                  <Chip
+                    key={sport}
+                    label={sport}
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      backgroundColor: alpha(theme.palette.primary.light, 0.08),
+                      color: theme.palette.primary.main,
+                      fontWeight: 500,
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        backgroundColor: alpha(theme.palette.primary.light, 0.15),
+                        transform: "scale(1.05)",
+                      },
+                    }}
+                  />
+                ))}
+            </Box>
           </Box>
         </StyledCardContent>
       </StyledEventCard>
@@ -831,16 +767,6 @@ const UpcomingEventsSlider = () => {
           {getProgressSteps()}
         </Box>
       )}
-
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => navigate("/upcoming-events")}
-          endIcon={<KeyboardArrowRight />}>
-          View all events
-        </Button>
-      </Box>
     </Box>
   );
 };

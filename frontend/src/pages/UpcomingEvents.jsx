@@ -36,6 +36,8 @@ import {
   SportsHockey,
   ChevronRight,
   GetApp,
+  LocalFireDepartment,
+  Sports,
 } from "@mui/icons-material";
 import axios from "axios";
 import { styled } from "@mui/material/styles";
@@ -81,6 +83,17 @@ const EventCard = styled(Card)(({ theme }) => ({
   borderRadius: theme.spacing(2),
   border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
   backgroundColor: alpha(theme.palette.background.paper, 0.9),
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: "4px",
+    background: (props) => `linear-gradient(90deg, ${theme.palette[getEventTypeDetails(props.eventType).color].main} 0%, ${alpha(theme.palette[getEventTypeDetails(props.eventType).color].main, 0.5)} 100%)`,
+    borderTopLeftRadius: theme.spacing(2),
+    borderTopRightRadius: theme.spacing(2),
+  },
 }));
 
 const CardActionArea = styled(Box)(({ theme }) => ({
@@ -184,72 +197,48 @@ const SportIconWrapper = styled(Box)(({ theme, sportColor }) => ({
   },
 }));
 
-const EventHeader = styled(Box)(({ theme, eventType }) => {
-  const colors = {
-    elevate: theme.palette.error.main,
-    tournament: theme.palette.primary.main,
-    intra: theme.palette.success.main,
-    annual: theme.palette.warning.main,
-    default: theme.palette.primary.main,
-  };
+const EventHeader = styled(Box)(({ theme }) => ({
+  position: "relative",
+  padding: theme.spacing(2),
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  background: (props) => alpha(theme.palette[getEventTypeDetails(props.eventType).color].main, 0.05),
+  borderBottom: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+}));
 
-  const color = colors[eventType] || colors.default;
+const DateDisplay = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  padding: theme.spacing(1),
+  borderRadius: theme.spacing(1),
+  background: alpha(theme.palette.background.paper, 0.8),
+  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+}));
 
-  return {
-    position: "relative",
-    height: 120,
-    backgroundColor: alpha(color, 0.08),
-    borderTopLeftRadius: theme.spacing(2),
-    borderTopRightRadius: theme.spacing(2),
-    overflow: "hidden",
-    "&::after": {
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundImage: `radial-gradient(circle at 25px 25px, ${alpha(
-        color,
-        0.15
-      )} 2%, transparent 50%)`,
-      opacity: 0.8,
-    },
-  };
-});
+const CountdownTimer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing(1),
+  padding: theme.spacing(1),
+  borderRadius: theme.spacing(1),
+  background: alpha(theme.palette.primary.main, 0.1),
+  color: theme.palette.primary.main,
+  fontWeight: 600,
+}));
 
-const DateChip = styled(Box)(({ theme, eventType }) => {
-  const colors = {
-    elevate: theme.palette.error.main,
-    tournament: theme.palette.primary.main,
-    intra: theme.palette.success.main,
-    annual: theme.palette.warning.main,
-    default: theme.palette.primary.main,
-  };
-
-  const color = colors[eventType] || colors.default;
-  return {
-    position: "absolute",
-    top: 16,
-    left: 16,
-    backgroundColor: alpha(theme.palette.background.paper, 0.95),
-    color: color,
-    padding: theme.spacing(0.5, 1.5),
-    borderRadius: theme.spacing(1.5),
-    fontWeight: "bold",
-    zIndex: 1,
-    boxShadow: `0 4px 14px ${alpha(color, 0.5)}`,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    borderLeft: `4px solid ${color}`,
-    transition: "all 0.3s ease",
-    "&:hover": {
-      transform: "scale(1.05)",
-      boxShadow: `0 6px 18px ${alpha(color, 0.6)}`,
-    },
-  };
-});
+const SportChip = styled(Chip)(({ theme }) => ({
+  margin: theme.spacing(0.5),
+  transition: "all 0.2s ease",
+  "&:hover": {
+    transform: "translateY(-2px)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+  },
+  "& .MuiChip-icon": {
+    display: "none",
+  },
+}));
 
 // Tab panel component for event categories
 const EventTabPanel = (props) => {
@@ -574,286 +563,172 @@ const UpcomingEvents = () => {
                           : "translateY(20px)",
                         transition: `all 0.5s ease ${eventIndex * 0.1}s`,
                       }}>
-                      <EventCard elevation={3}>
-                        <CategoryBadge
-                          eventType={event.type}
-                          label={getEventTypeDetails(event.type).label}
-                          icon={getEventTypeDetails(event.type).icon}
-                        />{" "}
+                      <EventCard elevation={3} eventType={event.type}>
                         <EventHeader eventType={event.type}>
-                          <EventTitleBadge eventType={event.type}>
-                            <Typography
-                              variant="subtitle2"
-                              noWrap
-                              sx={{ maxWidth: "100%" }}>
-                              {event.title}
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            {getEventTypeDetails(event.type).icon}
+                            <Typography variant="subtitle1" fontWeight={600}>
+                              {getEventTypeDetails(event.type).label}
                             </Typography>
-                          </EventTitleBadge>
-
-                          <DateChip eventType={event.type}>
-                            <Typography variant="caption" fontWeight={600}>
+                          </Box>
+                          <DateDisplay>
+                            <Typography variant="caption" color="text.secondary">
                               {getMonthAbbr(event.startDate)}
                             </Typography>
                             <Typography variant="h5" fontWeight={700}>
                               {getDayOfMonth(event.startDate)}
                             </Typography>
-                          </DateChip>
-                        </EventHeader>{" "}
-                        <CardContent
-                          sx={{
-                            pt: 2,
-                            flexGrow: 1,
-                            position: "relative",
-                            zIndex: 2,
+                          </DateDisplay>
+                        </EventHeader>
+
+                        <CardContent sx={{ pt: 2, pb: 1 }}>
+                          <Box sx={{ 
+                            mb: 1.5,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            backgroundColor: alpha(theme.palette.background.default, 0.1),
+                            p: 1,
+                            borderRadius: 1
                           }}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              mb: 1.5,
-                              alignItems: "center",
-                            }}>
-                            <Chip
-                              size="small"
-                              label={getDaysUntil(event.startDate)}
-                              color={
-                                getDaysUntil(event.startDate) === "Today"
-                                  ? "error"
-                                  : getDaysUntil(event.startDate) === "Tomorrow"
-                                  ? "warning"
-                                  : "default"
-                              }
-                              sx={{
-                                mr: 1,
-                                fontWeight: "bold",
-                                transition: "all 0.2s ease",
-                                "&:hover": {
-                                  transform: "translateY(-2px)",
-                                },
-                              }}
-                            />
-                            <AccessTime
-                              fontSize="small"
-                              color="action"
-                              sx={{ mr: 0.5 }}
-                            />
-                            <Typography
-                              variant="caption"
-                              color="text.secondary">
-                              {event.startDate === event.endDate
-                                ? "One-day event"
-                                : `${
-                                    getDaysUntil(event.endDate).includes("day")
-                                      ? getDaysUntil(event.endDate)
-                                      : "0 days"
-                                  } duration`}
-                            </Typography>
+                            <Box sx={{ textAlign: 'center' }}>
+                              <Typography variant="caption" color="text.secondary">
+                                Start Date
+                              </Typography>
+                              <Typography variant="body2" fontWeight={600}>
+                                {formatDate(event.startDate, true)}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ 
+                              width: '1px', 
+                              height: '24px', 
+                              backgroundColor: alpha(theme.palette.divider, 0.2) 
+                            }} />
+                            <Box sx={{ textAlign: 'center' }}>
+                              <Typography variant="caption" color="text.secondary">
+                                End Date
+                              </Typography>
+                              <Typography variant="body2" fontWeight={600}>
+                                {formatDate(event.endDate, true)}
+                              </Typography>
+                            </Box>
                           </Box>
+
+                          <Box sx={{ 
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'flex-start',
+                            mb: 1.5,
+                            padding: "12px 16px",
+                            backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.05),
+                            borderRadius: "8px",
+                            position: "relative",
+                            minHeight: "80px",
+                            "&::before": {
+                              content: '""',
+                              position: "absolute",
+                              left: 0,
+                              top: 0,
+                              bottom: 0,
+                              width: "4px",
+                              backgroundColor: (theme) => theme.palette.primary.main,
+                              borderTopLeftRadius: "8px",
+                              borderBottomLeftRadius: "8px",
+                            },
+                            "&:hover": {
+                              backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                              transform: "translateX(4px)",
+                              transition: "all 0.3s ease",
+                            },
+                          }}>
+                            <Box sx={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: 2,
+                              maxWidth: '90%',
+                              paddingLeft: '8px'
+                            }}>
+                              <EmojiEvents sx={{ 
+                                color: (theme) => theme.palette.primary.main,
+                                fontSize: '1.25rem',
+                                transform: 'scale(1.2)'
+                              }} />
+                              <Typography
+                                variant="h5"
+                                component="h2"
+                                sx={{
+                                  fontWeight: 700,
+                                  display: "-webkit-box",
+                                  overflow: "hidden",
+                                  WebkitBoxOrient: "vertical",
+                                  WebkitLineClamp: 2,
+                                  lineHeight: 1.4,
+                                  color: (theme) => theme.palette.primary.main,
+                                  margin: 0,
+                                  textAlign: 'center',
+                                  fontSize: '1.25rem'
+                                }}>
+                                {event.title}
+                              </Typography>
+                            </Box>
+                          </Box>
+
                           <Typography
-                            variant="h5"
-                            component="h2"
-                            gutterBottom
+                            variant="body2"
+                            color="text.secondary"
                             sx={{
-                              fontWeight: 700,
                               display: "-webkit-box",
                               overflow: "hidden",
                               WebkitBoxOrient: "vertical",
                               WebkitLineClamp: 2,
-                              lineHeight: 1.3,
-                              height: "2.6em",
-                              color: (theme) => theme.palette.text.primary,
-                              marginBottom: 1.5,
-                              position: "relative",
-                              "&::after": {
-                                content: '""',
-                                position: "absolute",
-                                bottom: -6,
-                                left: 0,
-                                width: "2rem",
-                                height: "3px",
-                                backgroundColor: (theme) =>
-                                  getEventTypeDetails(event.type).color ===
-                                  "default"
-                                    ? theme.palette.primary.main
-                                    : theme.palette[
-                                        getEventTypeDetails(event.type).color
-                                      ].main,
-                                borderRadius: "8px",
-                              },
-                            }}>
-                            {event.title}
-                          </Typography>{" "}
-                          <Box sx={{ mb: 2.5 }}>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "flex-start",
-                                mb: 1,
-                                backgroundColor: (theme) =>
-                                  alpha(theme.palette.background.default, 0.5),
-                                borderRadius: 1.5,
-                                py: 0.8,
-                                px: 1.2,
-                                maxWidth: "fit-content",
-                                transition: "all 0.2s ease",
-                                "&:hover": {
-                                  backgroundColor: (theme) =>
-                                    alpha(
-                                      theme.palette.background.default,
-                                      0.8
-                                    ),
-                                  transform: "translateX(3px)",
-                                },
-                              }}>
-                              <LocationOn
-                                sx={{
-                                  color: "primary.main",
-                                  mr: 1,
-                                  mt: 0.3,
-                                  fontSize: 20,
-                                }}
-                              />
-                              <Typography
-                                variant="body2"
-                                color="text.primary"
-                                sx={{
-                                  fontWeight: 500,
-                                  letterSpacing: "0.2px",
-                                }}>
-                                {event.venue}
-                              </Typography>
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                              gap: 0.75,
                               mb: 1.5,
                             }}>
-                            {event.sports &&
-                              event.sports.slice(0, 3).map((sport) => (
-                                <Chip
-                                  key={sport}
-                                  label={sport}
-                                  size="small"
-                                  variant="outlined"
-                                  sx={{
-                                    backgroundColor: (theme) =>
-                                      alpha(theme.palette.primary.main, 0.08),
-                                    borderColor: (theme) =>
-                                      alpha(theme.palette.primary.main, 0.2),
-                                    fontWeight: 500,
-                                    transition: "all 0.2s ease",
-                                    "&:hover": {
-                                      backgroundColor: (theme) =>
-                                        alpha(theme.palette.primary.main, 0.15),
-                                      transform: "translateY(-2px)",
-                                    },
-                                  }}
-                                />
-                              ))}
-                            {event.sports && event.sports.length > 3 && (
-                              <Chip
-                                label={`+${event.sports.length - 3} more`}
-                                size="small"
-                                sx={{
-                                  fontSize: "0.7rem",
-                                  fontWeight: 500,
-                                  backgroundColor: (theme) =>
-                                    alpha(theme.palette.secondary.light, 0.1),
-                                  color: "secondary.main",
-                                }}
-                              />
-                            )}
-                          </Box>
-                        </CardContent>
-                        <Collapse
-                          in={expandedId === event._id}
-                          timeout="auto"
-                          unmountOnExit>
-                          <CardContent sx={{ pt: 0 }}>
-                            <Divider sx={{ mb: 2 }} />
-                            <Typography variant="body2" paragraph>
-                              {event.description}
-                            </Typography>
+                            {event.description}
+                          </Typography>
 
-                            {event.sports && event.sports.length > 0 && (
-                              <Box sx={{ mb: 2 }}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                  All Sports & Activities:
-                                </Typography>
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    flexWrap: "wrap",
-                                    gap: 0.5,
-                                  }}>
-                                  {event.sports.map((sport) => (
-                                    <Chip
-                                      key={sport}
-                                      label={sport}
-                                      size="small"
-                                      variant="outlined"
-                                    />
-                                  ))}
-                                </Box>
-                              </Box>
-                            )}
-
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                mt: 1,
-                              }}>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary">
-                                {formatDate(event.startDate)}
-                                {event.startDate !== event.endDate && (
-                                  <> — {formatDate(event.endDate)}</>
-                                )}
+                          {event.sports && event.sports.length > 0 && (
+                            <Box sx={{ mb: 1.5 }}>
+                              <Typography variant="subtitle2" gutterBottom>
+                                Sports & Activities:
                               </Typography>
+                              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                                {event.sports.map((sport) => (
+                                  <SportChip
+                                    key={sport}
+                                    label={sport}
+                                    size="small"
+                                    sx={{
+                                      backgroundColor: alpha(theme.palette.primary.light, 0.1),
+                                      color: theme.palette.primary.main,
+                                    }}
+                                  />
+                                ))}
+                              </Box>
                             </Box>
-                          </CardContent>
-                        </Collapse>{" "}
-                        <CardActions
-                          sx={{
-                            justifyContent: "flex-end",
-                            mt: "auto",
-                            borderTop: `1px solid ${alpha(
-                              theme.palette.divider,
-                              0.1
-                            )}`,
-                            pt: 1.5,
-                            pb: 1.5,
-                            px: 2,
-                            backgroundColor: (theme) =>
-                              alpha(theme.palette.background.default, 0.2),
-                          }}>
+                          )}
+                        </CardContent>
+
+                        <CardActions sx={{ mt: "auto", p: 1.5, borderTop: `1px solid ${alpha(theme.palette.divider, 0.08)}` }}>
                           {event.brochureUrl && (
                             <Button
-                              size="small"
-                              startIcon={<GetApp />}
-                              onClick={() =>
-                                window.open(event.brochureUrl, "_blank")
-                              }
                               variant="outlined"
                               color="secondary"
+                              size="small"
+                              startIcon={<GetApp />}
+                              onClick={() => window.open(event.brochureUrl, "_blank")}
                               sx={{
-                                borderRadius: 4,
+                                borderRadius: "20px",
                                 textTransform: "none",
                                 fontWeight: 600,
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                                 transition: "all 0.2s ease",
                                 "&:hover": {
                                   transform: "translateY(-2px)",
-                                  boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                                 },
                               }}>
                               Brochure
                             </Button>
-                          )}{" "}
+                          )}
                         </CardActions>
                       </EventCard>
                     </Grid>

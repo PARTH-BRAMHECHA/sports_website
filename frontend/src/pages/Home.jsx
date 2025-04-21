@@ -1,6 +1,5 @@
 import { Box, Container, Typography, Paper } from "@mui/material";
 import UpcomingEventsSlider from "../components/UpcomingEventsSlider";
-import RecentAchievements from "../components/RecentAchievements";
 import SportsFacilities from "../components/SportsFacilities";
 import ContactForm from "../components/ContactForm";
 
@@ -55,13 +54,11 @@ const Home = () => {
           <Typography variant="h5" component="h2" gutterBottom align="center">
             Your one-stop destination for sports events and achievements
           </Typography> */}
-        </Box>{" "}
+        </Box>
         {/* Events Slider Section */}
         <Box sx={{ mb: 6 }}>
           <UpcomingEventsSlider />
         </Box>
-        {/* Recent Achievements Section */}
-        <RecentAchievements />
         {/* Sports Facilities Section */}
         <SportsFacilities />
         {/* Contact Form Section */}
