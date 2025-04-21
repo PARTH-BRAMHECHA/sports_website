@@ -52,6 +52,8 @@ const classifications = ["Group", "Individual"];
 const ManageAchievements = () => {
   const [achievements, setAchievements] = useState([]);
   const [open, setOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [achievementToDelete, setAchievementToDelete] = useState(null);
   const [selectedAchievement, setSelectedAchievement] = useState(null);
   const [formData, setFormData] = useState({
     level: "",
@@ -133,6 +135,32 @@ const ManageAchievements = () => {
     }
   };
 
+  const handleDeleteConfirmation = (achievement) => {
+    setAchievementToDelete(achievement);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setAchievementToDelete(null);
+  };
+
+  const handleDeleteAchievement = async () => {
+    try {
+      await axios.delete(
+        `http://localhost:4000/api/admin/achievements/${achievementToDelete._id}`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
+      fetchAchievements();
+      setDeleteDialogOpen(false);
+      setAchievementToDelete(null);
+    } catch (error) {
+      console.error("Error deleting achievement:", error);
+    }
+  };
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
@@ -156,6 +184,7 @@ const ManageAchievements = () => {
               <TableCell>Year</TableCell>
               <TableCell>Category</TableCell>
               <TableCell>Classification</TableCell>
+              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -168,6 +197,18 @@ const ManageAchievements = () => {
                 <TableCell>{achievement.year}</TableCell>
                 <TableCell>{achievement.category}</TableCell>
                 <TableCell>{achievement.classification}</TableCell>
+                <TableCell align="center">
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleOpen(achievement)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    color="error"
+                    onClick={() => handleDeleteConfirmation(achievement)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -284,6 +325,37 @@ const ManageAchievements = () => {
             </Button>
           </DialogActions>
         </form>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        aria-labelledby="delete-dialog-title">
+        <DialogTitle id="delete-dialog-title">Delete Achievement</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this achievement?
+            {achievementToDelete && (
+              <Box sx={{ mt: 2, fontWeight: "bold" }}>
+                "{achievementToDelete.sportType} -{" "}
+                {achievementToDelete.position}"
+                {achievementToDelete.classification === "Individual" &&
+                  ` by ${achievementToDelete.participantName}`}
+              </Box>
+            )}
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel}>Cancel</Button>
+          <Button
+            onClick={handleDeleteAchievement}
+            color="error"
+            variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
       </Dialog>
     </Container>
   );
