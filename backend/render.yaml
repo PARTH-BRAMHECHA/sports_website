@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: sports-website-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: MONGODB_URI
+        sync: false # This will ask for this value during deployment
+      - key: JWT_SECRET
+        sync: false # This will ask for this value during deployment
+      - key: ALLOWED_ORIGINS
+        value: https://your-vercel-frontend-url.vercel.app,http://localhost:3000
