@@ -30,7 +30,12 @@ app.use(express.json());
 // Set up CORS for deployment
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
-  : ["http://localhost:3000", "https://your-vercel-frontend-url.vercel.app"];
+  : [
+      "http://localhost:3000",
+      "https://sports-website-1.onrender.com",
+      "https://sports-website-r0ec.onrender.com",
+      "https://sportswebsite-dgjyy690z-sairajbs-projects.vercel.app",
+    ];
 
 app.use(
   cors({
