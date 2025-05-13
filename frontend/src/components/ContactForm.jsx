@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Box,
   TextField,
@@ -6,31 +6,31 @@ import {
   Typography,
   Alert,
   MenuItem,
-  Paper
-} from '@mui/material';
-import axios from 'axios';
+  Paper,
+} from "@mui/material";
+import axios from "axios";
 
 const sports = [
-  'Basketball',
-  'Volleyball',
-  'Table Tennis',
-  'Carrom',
-  'Chess',
-  'Cricket',
-  'Athletics'
+  "Basketball",
+  "Volleyball",
+  "Table Tennis",
+  "Carrom",
+  "Chess",
+  "Cricket",
+  "Athletics",
 ];
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    sport: '',
-    prnNumber: '',
-    enrollmentNumber: '',
-    message: ''
+    name: "",
+    phone: "",
+    email: "",
+    sport: "",
+    prnNumber: "",
+    enrollmentNumber: "",
+    message: "",
   });
-  const [status, setStatus] = useState({ type: '', message: '' });
+  const [status, setStatus] = useState({ type: "", message: "" });
   const [loading, setLoading] = useState(false);
 
   const validateForm = () => {
@@ -38,75 +38,86 @@ const ContactForm = () => {
     const phoneRegex = /^[0-9]{10}$/;
 
     if (!formData.name.trim()) {
-      setStatus({ type: 'error', message: 'Name is required' });
+      setStatus({ type: "error", message: "Name is required" });
       return false;
     }
     if (!phoneRegex.test(formData.phone)) {
-      setStatus({ type: 'error', message: 'Please enter a valid 10-digit phone number' });
+      setStatus({
+        type: "error",
+        message: "Please enter a valid 10-digit phone number",
+      });
       return false;
     }
     if (!emailRegex.test(formData.email)) {
-      setStatus({ type: 'error', message: 'Please enter a valid email address' });
+      setStatus({
+        type: "error",
+        message: "Please enter a valid email address",
+      });
       return false;
     }
     if (!formData.sport) {
-      setStatus({ type: 'error', message: 'Please select a sport' });
+      setStatus({ type: "error", message: "Please select a sport" });
       return false;
     }
     if (!formData.prnNumber.trim()) {
-      setStatus({ type: 'error', message: 'PRN number is required' });
+      setStatus({ type: "error", message: "PRN number is required" });
       return false;
     }
     if (!formData.enrollmentNumber.trim()) {
-      setStatus({ type: 'error', message: 'Enrollment number is required' });
+      setStatus({ type: "error", message: "Enrollment number is required" });
       return false;
     }
     if (!formData.message.trim()) {
-      setStatus({ type: 'error', message: 'Message is required' });
+      setStatus({ type: "error", message: "Message is required" });
       return false;
     }
     return true;
   };
 
   const handleChange = (e) => {
-    setStatus({ type: '', message: '' }); // Clear any previous error messages
+    setStatus({ type: "", message: "" }); // Clear any previous error messages
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:4000/api/contact', formData);
-      
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/contact`,
+        formData
+      );
+
       if (response.status === 201) {
         setStatus({
-          type: 'success',
-          message: 'Thank you for your message. We will contact you soon!'
+          type: "success",
+          message: "Thank you for your message. We will contact you soon!",
         });
         setFormData({
-          name: '',
-          phone: '',
-          email: '',
-          sport: '',
-          prnNumber: '',
-          enrollmentNumber: '',
-          message: ''
+          name: "",
+          phone: "",
+          email: "",
+          sport: "",
+          prnNumber: "",
+          enrollmentNumber: "",
+          message: "",
         });
       }
     } catch (error) {
-      console.error('Contact form submission error:', error);
+      console.error("Contact form submission error:", error);
       setStatus({
-        type: 'error',
-        message: error.response?.data?.message || 'There was an error sending your message. Please try again.'
+        type: "error",
+        message:
+          error.response?.data?.message ||
+          "There was an error sending your message. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -118,7 +129,7 @@ const ContactForm = () => {
       <Typography variant="h4" gutterBottom align="center">
         Show Your Interest
       </Typography>
-      <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
+      <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
         {status.message && (
           <Alert severity={status.type} sx={{ mb: 2 }}>
             {status.message}
@@ -133,7 +144,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
-            error={status.type === 'error' && !formData.name}
+            error={status.type === "error" && !formData.name}
           />
           <TextField
             fullWidth
@@ -143,7 +154,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
-            error={status.type === 'error' && !formData.phone}
+            error={status.type === "error" && !formData.phone}
           />
           <TextField
             fullWidth
@@ -154,7 +165,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
-            error={status.type === 'error' && !formData.email}
+            error={status.type === "error" && !formData.email}
           />
           <TextField
             fullWidth
@@ -164,7 +175,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
-            error={status.type === 'error' && !formData.prnNumber}
+            error={status.type === "error" && !formData.prnNumber}
           />
           <TextField
             fullWidth
@@ -174,7 +185,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
-            error={status.type === 'error' && !formData.enrollmentNumber}
+            error={status.type === "error" && !formData.enrollmentNumber}
           />
           <TextField
             fullWidth
@@ -185,8 +196,7 @@ const ContactForm = () => {
             onChange={handleChange}
             margin="normal"
             required
-            error={status.type === 'error' && !formData.sport}
-          >
+            error={status.type === "error" && !formData.sport}>
             {sports.map((sport) => (
               <MenuItem key={sport} value={sport}>
                 {sport}
@@ -203,16 +213,15 @@ const ContactForm = () => {
             multiline
             rows={4}
             required
-            error={status.type === 'error' && !formData.message}
+            error={status.type === "error" && !formData.message}
           />
           <Button
             type="submit"
             variant="contained"
             fullWidth
             sx={{ mt: 2 }}
-            disabled={loading}
-          >
-            {loading ? 'Sending...' : 'Send Message'}
+            disabled={loading}>
+            {loading ? "Sending..." : "Send Message"}
           </Button>
         </form>
       </Paper>

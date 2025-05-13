@@ -368,7 +368,7 @@ const Achievements = () => {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          "http://localhost:4000/api/admin/achievements"
+          `${import.meta.env.VITE_API_URL}/api/admin/achievements`
         );
 
         if (data && data.length > 0) {

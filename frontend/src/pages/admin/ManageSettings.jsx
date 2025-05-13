@@ -37,7 +37,7 @@ const ManageSettings = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:4000/api/admin/settings",
+        `${import.meta.env.VITE_API_URL}/api/admin/settings`,
         {
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -64,7 +64,7 @@ const ManageSettings = () => {
       const updatedRegistrationStatus = !settings.registrationEnabled;
 
       await axios.put(
-        "http://localhost:4000/api/admin/settings",
+        `${import.meta.env.VITE_API_URL}/api/admin/settings`,
         { registrationEnabled: updatedRegistrationStatus },
         {
           headers: {
@@ -105,7 +105,7 @@ const ManageSettings = () => {
       setSuccess("");
 
       await axios.put(
-        "http://localhost:4000/api/admin/settings",
+        `${import.meta.env.VITE_API_URL}/api/admin/settings`,
         { googleCalendarId: settings.googleCalendarId },
         {
           headers: {

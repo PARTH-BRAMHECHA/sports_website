@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -19,31 +19,34 @@ import {
   DialogContentText,
   DialogActions,
   Alert,
-  CircularProgress
-} from '@mui/material';
-import { 
-  CheckCircle as ApproveIcon, 
+  CircularProgress,
+} from "@mui/material";
+import {
+  CheckCircle as ApproveIcon,
   Cancel as RejectIcon,
-  Email as EmailIcon 
-} from '@mui/icons-material';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+  Email as EmailIcon,
+} from "@mui/icons-material";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 const statusColors = {
-  pending: 'warning',
-  approved: 'success',
-  rejected: 'error'
+  pending: "warning",
+  approved: "success",
+  rejected: "error",
 };
 
 const ManageRegistrations = () => {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [selectedRegistration, setSelectedRegistration] = useState(null);
-  const [statusAction, setStatusAction] = useState('');
+  const [statusAction, setStatusAction] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [actionSuccess, setActionSuccess] = useState({ show: false, message: '' });
-  
+  const [actionSuccess, setActionSuccess] = useState({
+    show: false,
+    message: "",
+  });
+
   const { user } = useAuth();
 
   useEffect(() => {
@@ -53,16 +56,19 @@ const ManageRegistrations = () => {
   const fetchRegistrations = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('http://localhost:4000/api/elevate', {
-        headers: { 
-          'Authorization': `Bearer ${user.token}` 
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/elevate`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
         }
-      });
+      );
       setRegistrations(data);
-      setError('');
+      setError("");
     } catch (error) {
-      console.error('Error fetching registrations:', error);
-      setError('Failed to load registrations. Please try again.');
+      console.error("Error fetching registrations:", error);
+      setError("Failed to load registrations. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -70,42 +76,47 @@ const ManageRegistrations = () => {
 
   const handleUpdateStatus = async () => {
     if (!selectedRegistration || !statusAction) return;
-    
+
     try {
       await axios.patch(
-        `http://localhost:4000/api/elevate/${selectedRegistration._id}/status`,
+        `${import.meta.env.VITE_API_URL}/api/elevate/${
+          selectedRegistration._id
+        }/status`,
         { status: statusAction },
         {
-          headers: { 
-            'Authorization': `Bearer ${user.token}` 
-          }
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
         }
       );
-      
+
       // Update local state
-      setRegistrations(registrations.map(reg => 
-        reg._id === selectedRegistration._id 
-          ? { ...reg, status: statusAction } 
-          : reg
-      ));
-      
-      setActionSuccess({ 
-        show: true, 
-        message: `Registration ${statusAction === 'approved' ? 'approved' : 'rejected'} successfully!` 
+      setRegistrations(
+        registrations.map((reg) =>
+          reg._id === selectedRegistration._id
+            ? { ...reg, status: statusAction }
+            : reg
+        )
+      );
+
+      setActionSuccess({
+        show: true,
+        message: `Registration ${
+          statusAction === "approved" ? "approved" : "rejected"
+        } successfully!`,
       });
-      
+
       // Auto hide success message after 3 seconds
       setTimeout(() => {
-        setActionSuccess({ show: false, message: '' });
+        setActionSuccess({ show: false, message: "" });
       }, 3000);
-      
     } catch (error) {
-      console.error('Error updating registration status:', error);
-      setError('Failed to update status. Please try again.');
+      console.error("Error updating registration status:", error);
+      setError("Failed to update status. Please try again.");
     } finally {
       setDialogOpen(false);
       setSelectedRegistration(null);
-      setStatusAction('');
+      setStatusAction("");
     }
   };
 
@@ -118,20 +129,26 @@ const ManageRegistrations = () => {
   const closeDialog = () => {
     setDialogOpen(false);
     setSelectedRegistration(null);
-    setStatusAction('');
+    setStatusAction("");
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "70vh",
+        }}>
         <CircularProgress />
       </Box>
     );
@@ -142,21 +159,21 @@ const ManageRegistrations = () => {
       <Typography variant="h4" gutterBottom>
         Manage Team Registrations
       </Typography>
-      
+
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
-      
+
       {actionSuccess.show && (
         <Alert severity="success" sx={{ mb: 2 }}>
           {actionSuccess.message}
         </Alert>
       )}
-      
+
       {registrations.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
+        <Paper sx={{ p: 4, textAlign: "center" }}>
           <Typography variant="h6" color="textSecondary">
             No team registrations found
           </Typography>
@@ -197,21 +214,23 @@ const ManageRegistrations = () => {
                     />
                   </TableCell>
                   <TableCell>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      {registration.status === 'pending' && (
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      {registration.status === "pending" && (
                         <>
                           <IconButton
                             color="success"
-                            onClick={() => openStatusDialog(registration, 'approved')}
-                            title="Approve"
-                          >
+                            onClick={() =>
+                              openStatusDialog(registration, "approved")
+                            }
+                            title="Approve">
                             <ApproveIcon />
                           </IconButton>
                           <IconButton
                             color="error"
-                            onClick={() => openStatusDialog(registration, 'rejected')}
-                            title="Reject"
-                          >
+                            onClick={() =>
+                              openStatusDialog(registration, "rejected")
+                            }
+                            title="Reject">
                             <RejectIcon />
                           </IconButton>
                         </>
@@ -219,8 +238,7 @@ const ManageRegistrations = () => {
                       <IconButton
                         color="primary"
                         href={`mailto:${registration.email}`}
-                        title="Email Team"
-                      >
+                        title="Email Team">
                         <EmailIcon />
                       </IconButton>
                     </Box>
@@ -235,21 +253,25 @@ const ManageRegistrations = () => {
       {/* Confirmation Dialog */}
       <Dialog open={dialogOpen} onClose={closeDialog}>
         <DialogTitle>
-          {statusAction === 'approved' ? 'Approve Registration' : 'Reject Registration'}
+          {statusAction === "approved"
+            ? "Approve Registration"
+            : "Reject Registration"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to {statusAction === 'approved' ? 'approve' : 'reject'} the registration for team "{selectedRegistration?.teamName}" from {selectedRegistration?.collegeName}?
+            Are you sure you want to{" "}
+            {statusAction === "approved" ? "approve" : "reject"} the
+            registration for team "{selectedRegistration?.teamName}" from{" "}
+            {selectedRegistration?.collegeName}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDialog}>Cancel</Button>
-          <Button 
-            onClick={handleUpdateStatus} 
-            color={statusAction === 'approved' ? 'success' : 'error'}
-            autoFocus
-          >
-            {statusAction === 'approved' ? 'Approve' : 'Reject'}
+          <Button
+            onClick={handleUpdateStatus}
+            color={statusAction === "approved" ? "success" : "error"}
+            autoFocus>
+            {statusAction === "approved" ? "Approve" : "Reject"}
           </Button>
         </DialogActions>
       </Dialog>

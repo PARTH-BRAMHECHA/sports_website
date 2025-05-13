@@ -84,7 +84,9 @@ const Gallery = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4000/api/gallery");
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/gallery`
+        );
         setImages(data);
         // Combine backend images with static images
         setAllImages([...staticImages, ...data]);
@@ -160,7 +162,7 @@ const Gallery = () => {
                     image.imageUrl && typeof image.imageUrl === "string"
                       ? image.imageUrl.startsWith("/")
                         ? image.imageUrl // Static image path
-                        : `http://localhost:4000${image.imageUrl}` // Backend image path
+                        : `${import.meta.env.VITE_API_URL}${image.imageUrl}` // Backend image path
                       : "/images/hero-bg.jpg" // Fallback image if imageUrl is undefined
                   }
                   alt={image.title || "Sports image"}
@@ -230,7 +232,7 @@ const Gallery = () => {
                 src={
                   selectedImage.imageUrl.startsWith("/")
                     ? selectedImage.imageUrl // Static image path
-                    : `http://localhost:4000${selectedImage.imageUrl}`
+                    : `${import.meta.env.VITE_API_URL}${selectedImage.imageUrl}`
                 } // Backend image path
                 alt={selectedImage.title}
                 style={{

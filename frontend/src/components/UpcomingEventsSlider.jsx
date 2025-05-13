@@ -244,7 +244,7 @@ const UpcomingEventsSlider = () => {
   const fetchEvents = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/admin/events"
+        `${import.meta.env.VITE_API_URL}/api/admin/events`
       );
       setEvents(data);
     } catch (error) {
@@ -729,7 +729,13 @@ const UpcomingEventsSlider = () => {
             </Grid>
           </Grid>
 
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1, flexWrap: "wrap" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              flexWrap: "wrap",
+            }}>
             <Typography
               variant="body2"
               color="text.secondary"
@@ -748,10 +754,16 @@ const UpcomingEventsSlider = () => {
                       backgroundColor: alpha(theme.palette.primary.light, 0.08),
                       color: theme.palette.primary.main,
                       fontWeight: 500,
-                      border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                      border: `1px solid ${alpha(
+                        theme.palette.primary.main,
+                        0.2
+                      )}`,
                       transition: "all 0.2s ease",
                       "&:hover": {
-                        backgroundColor: alpha(theme.palette.primary.light, 0.15),
+                        backgroundColor: alpha(
+                          theme.palette.primary.light,
+                          0.15
+                        ),
                         transform: "scale(1.05)",
                       },
                     }}

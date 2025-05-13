@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Box,
   Paper,
@@ -12,102 +12,102 @@ import {
   TableRow,
   Typography,
   Chip,
-  CircularProgress
-} from '@mui/material';
-import axios from 'axios';
+  CircularProgress,
+} from "@mui/material";
+import axios from "axios";
 
 // Fallback data in case API call fails
 const fallbackSchedule = {
-  'Day 1': [
+  "Day 1": [
     {
-      time: '08:00 AM',
-      event: 'Opening Ceremony',
-      venue: 'Main Ground',
-      type: 'ceremony'
+      time: "08:00 AM",
+      event: "Opening Ceremony",
+      venue: "Main Ground",
+      type: "ceremony",
     },
     {
-      time: '09:30 AM',
-      event: 'Basketball Preliminaries',
-      venue: 'Basketball Court',
-      type: 'sport'
+      time: "09:30 AM",
+      event: "Basketball Preliminaries",
+      venue: "Basketball Court",
+      type: "sport",
     },
     {
-      time: '10:00 AM',
-      event: 'Table Tennis Round 1',
-      venue: 'Indoor Hall',
-      type: 'sport'
+      time: "10:00 AM",
+      event: "Table Tennis Round 1",
+      venue: "Indoor Hall",
+      type: "sport",
     },
     {
-      time: '02:00 PM',
-      event: 'Volleyball Preliminaries',
-      venue: 'Volleyball Court',
-      type: 'sport'
+      time: "02:00 PM",
+      event: "Volleyball Preliminaries",
+      venue: "Volleyball Court",
+      type: "sport",
     },
     {
-      time: '04:00 PM',
-      event: 'Chess Tournament Start',
-      venue: 'Academic Block',
-      type: 'sport'
-    }
+      time: "04:00 PM",
+      event: "Chess Tournament Start",
+      venue: "Academic Block",
+      type: "sport",
+    },
   ],
-  'Day 2': [
+  "Day 2": [
     {
-      time: '09:00 AM',
-      event: 'Cricket Quarter Finals',
-      venue: 'Cricket Ground',
-      type: 'sport'
+      time: "09:00 AM",
+      event: "Cricket Quarter Finals",
+      venue: "Cricket Ground",
+      type: "sport",
     },
     {
-      time: '10:00 AM',
-      event: 'Basketball Semi Finals',
-      venue: 'Basketball Court',
-      type: 'sport'
+      time: "10:00 AM",
+      event: "Basketball Semi Finals",
+      venue: "Basketball Court",
+      type: "sport",
     },
     {
-      time: '02:00 PM',
-      event: 'Cultural Performance',
-      venue: 'Main Stage',
-      type: 'cultural'
+      time: "02:00 PM",
+      event: "Cultural Performance",
+      venue: "Main Stage",
+      type: "cultural",
     },
     {
-      time: '03:30 PM',
-      event: 'Table Tennis Finals',
-      venue: 'Indoor Hall',
-      type: 'sport'
-    }
+      time: "03:30 PM",
+      event: "Table Tennis Finals",
+      venue: "Indoor Hall",
+      type: "sport",
+    },
   ],
-  'Day 3': [
+  "Day 3": [
     {
-      time: '09:00 AM',
-      event: 'Cricket Finals',
-      venue: 'Cricket Ground',
-      type: 'sport'
+      time: "09:00 AM",
+      event: "Cricket Finals",
+      venue: "Cricket Ground",
+      type: "sport",
     },
     {
-      time: '11:00 AM',
-      event: 'Basketball Finals',
-      venue: 'Basketball Court',
-      type: 'sport'
+      time: "11:00 AM",
+      event: "Basketball Finals",
+      venue: "Basketball Court",
+      type: "sport",
     },
     {
-      time: '02:00 PM',
-      event: 'Volleyball Finals',
-      venue: 'Volleyball Court',
-      type: 'sport'
+      time: "02:00 PM",
+      event: "Volleyball Finals",
+      venue: "Volleyball Court",
+      type: "sport",
     },
     {
-      time: '05:00 PM',
-      event: 'Prize Distribution',
-      venue: 'Main Stage',
-      type: 'ceremony'
+      time: "05:00 PM",
+      event: "Prize Distribution",
+      venue: "Main Stage",
+      type: "ceremony",
     },
     {
-      time: '06:30 PM',
-      event: 'Closing Ceremony',
-      venue: 'Main Stage',
-      type: 'ceremony'
-    }
-  ]
+      time: "06:30 PM",
+      event: "Closing Ceremony",
+      venue: "Main Stage",
+      type: "ceremony",
+    },
+  ],
 };
 
 const ElevateSchedule = () => {
@@ -121,24 +121,26 @@ const ElevateSchedule = () => {
       try {
         setLoading(true);
         // Use the public API endpoint instead of the admin one
-        const response = await axios.get('http://localhost:4000/api/schedules');
-        console.log('Schedule API response:', response.data);
-        
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/schedules`
+        );
+        console.log("Schedule API response:", response.data);
+
         if (response.data && response.data.length > 0) {
           // Transform the data to match our component's format
           const transformedData = {};
-          response.data[0].days.forEach(day => {
+          response.data[0].days.forEach((day) => {
             transformedData[day.dayName] = day.events;
           });
           setSchedule(transformedData);
         } else {
-          console.log('No schedule data found, using fallback data');
+          console.log("No schedule data found, using fallback data");
           setSchedule(fallbackSchedule);
         }
       } catch (err) {
-        console.error('Error fetching schedule:', err);
-        setError('Failed to load schedule data');
-        console.log('Using fallback schedule data due to error');
+        console.error("Error fetching schedule:", err);
+        setError("Failed to load schedule data");
+        console.log("Using fallback schedule data due to error");
         setSchedule(fallbackSchedule);
       } finally {
         setLoading(false);
@@ -154,20 +156,20 @@ const ElevateSchedule = () => {
 
   const getChipColor = (type) => {
     switch (type) {
-      case 'sport':
-        return 'primary';
-      case 'ceremony':
-        return 'success';
-      case 'cultural':
-        return 'secondary';
+      case "sport":
+        return "primary";
+      case "ceremony":
+        return "success";
+      case "cultural":
+        return "secondary";
       default:
-        return 'default';
+        return "default";
     }
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -175,32 +177,31 @@ const ElevateSchedule = () => {
 
   if (!schedule) {
     return (
-      <Box sx={{ textAlign: 'center', my: 4 }}>
+      <Box sx={{ textAlign: "center", my: 4 }}>
         <Typography color="error">No schedule data available</Typography>
       </Box>
     );
   }
 
   return (
-    <Box id="schedule" sx={{ width: '100%', mb: 6 }}>
+    <Box id="schedule" sx={{ width: "100%", mb: 6 }}>
       <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
         Event Schedule
       </Typography>
-      
+
       {error && (
         <Typography color="error" align="center" sx={{ mb: 2 }}>
           {error}
         </Typography>
       )}
-      
-      <Paper sx={{ width: '100%', mb: 2 }}>
+
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <Tabs
           value={selectedDay}
           onChange={handleChange}
           indicatorColor="primary"
           textColor="primary"
-          centered
-        >
+          centered>
           {Object.keys(schedule).map((day, index) => (
             <Tab key={day} label={day} id={`tab-${index}`} />
           ))}
@@ -212,8 +213,7 @@ const ElevateSchedule = () => {
           key={day}
           role="tabpanel"
           hidden={selectedDay !== index}
-          id={`tabpanel-${index}`}
-        >
+          id={`tabpanel-${index}`}>
           {selectedDay === index && (
             <TableContainer component={Paper}>
               <Table>
@@ -233,7 +233,10 @@ const ElevateSchedule = () => {
                       <TableCell>{event.venue}</TableCell>
                       <TableCell>
                         <Chip
-                          label={event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                          label={
+                            event.type.charAt(0).toUpperCase() +
+                            event.type.slice(1)
+                          }
                           color={getChipColor(event.type)}
                           size="small"
                         />

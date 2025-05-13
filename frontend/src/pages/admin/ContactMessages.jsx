@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -19,15 +19,15 @@ import {
   Chip,
   TablePagination,
   Alert,
-  CircularProgress
-} from '@mui/material';
+  CircularProgress,
+} from "@mui/material";
 import {
   Delete as DeleteIcon,
   Visibility as VisibilityIcon,
-  MarkEmailRead as MarkEmailReadIcon
-} from '@mui/icons-material';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+  MarkEmailRead as MarkEmailReadIcon,
+} from "@mui/icons-material";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 const ContactMessages = () => {
   const [messages, setMessages] = useState([]);
@@ -46,13 +46,16 @@ const ContactMessages = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get('http://localhost:4000/api/contact', {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/contact`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
       setMessages(response.data);
     } catch (error) {
-      console.error('Error fetching messages:', error);
-      setError('Failed to load contact messages. Please try again.');
+      console.error("Error fetching messages:", error);
+      setError("Failed to load contact messages. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -61,29 +64,32 @@ const ContactMessages = () => {
   const handleMarkAsRead = async (id) => {
     try {
       await axios.patch(
-        `http://localhost:4000/api/contact/${id}/read`,
+        `${import.meta.env.VITE_API_URL}/api/contact/${id}/read`,
         {},
         {
-          headers: { Authorization: `Bearer ${user.token}` }
+          headers: { Authorization: `Bearer ${user.token}` },
         }
       );
       fetchMessages();
     } catch (error) {
-      console.error('Error marking message as read:', error);
-      setError('Failed to mark message as read. Please try again.');
+      console.error("Error marking message as read:", error);
+      setError("Failed to mark message as read. Please try again.");
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this message?')) {
+    if (window.confirm("Are you sure you want to delete this message?")) {
       try {
-        await axios.delete(`http://localhost:4000/api/contact/${id}`, {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
+        await axios.delete(
+          `${import.meta.env.VITE_API_URL}/api/contact/${id}`,
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }
+        );
         fetchMessages();
       } catch (error) {
-        console.error('Error deleting message:', error);
-        setError('Failed to delete message. Please try again.');
+        console.error("Error deleting message:", error);
+        setError("Failed to delete message. Please try again.");
       }
     }
   };
@@ -98,12 +104,12 @@ const ContactMessages = () => {
   };
 
   const isMessageRead = (message) => {
-    return message.status === 'read' || message.status === 'responded';
+    return message.status === "read" || message.status === "responded";
   };
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4, textAlign: 'center' }}>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4, textAlign: "center" }}>
         <CircularProgress />
         <Typography sx={{ mt: 2 }}>Loading messages...</Typography>
       </Container>
@@ -123,7 +129,7 @@ const ContactMessages = () => {
       )}
 
       {messages.length === 0 ? (
-        <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <Paper sx={{ p: 3, textAlign: "center" }}>
           <Typography>No contact messages found.</Typography>
         </Paper>
       ) : (
@@ -150,8 +156,8 @@ const ContactMessages = () => {
                     <TableCell>{message.sport}</TableCell>
                     <TableCell>
                       <Chip
-                        label={isMessageRead(message) ? 'Read' : 'Unread'}
-                        color={isMessageRead(message) ? 'default' : 'primary'}
+                        label={isMessageRead(message) ? "Read" : "Unread"}
+                        color={isMessageRead(message) ? "default" : "primary"}
                         size="small"
                       />
                     </TableCell>
@@ -160,14 +166,14 @@ const ContactMessages = () => {
                         <VisibilityIcon />
                       </IconButton>
                       {!isMessageRead(message) && (
-                        <IconButton onClick={() => handleMarkAsRead(message._id)}>
+                        <IconButton
+                          onClick={() => handleMarkAsRead(message._id)}>
                           <MarkEmailReadIcon />
                         </IconButton>
                       )}
                       <IconButton
                         color="error"
-                        onClick={() => handleDelete(message._id)}
-                      >
+                        onClick={() => handleDelete(message._id)}>
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -191,8 +197,7 @@ const ContactMessages = () => {
         open={!!selectedMessage}
         onClose={() => setSelectedMessage(null)}
         maxWidth="sm"
-        fullWidth
-      >
+        fullWidth>
         <DialogTitle>Message Details</DialogTitle>
         {selectedMessage && (
           <DialogContent>
@@ -212,8 +217,12 @@ const ContactMessages = () => {
               Date: {new Date(selectedMessage.createdAt).toLocaleString()}
             </Typography>
             <Typography variant="subtitle2" gutterBottom>
-              Status: {selectedMessage.status === 'new' ? 'Unread' : 
-                      selectedMessage.status === 'responded' ? 'Responded' : 'Read'}
+              Status:{" "}
+              {selectedMessage.status === "new"
+                ? "Unread"
+                : selectedMessage.status === "responded"
+                ? "Responded"
+                : "Read"}
             </Typography>
             <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
               Message:
@@ -232,8 +241,7 @@ const ContactMessages = () => {
                 setSelectedMessage(null);
               }}
               color="primary"
-              variant="contained"
-            >
+              variant="contained">
               Mark as Read
             </Button>
           )}

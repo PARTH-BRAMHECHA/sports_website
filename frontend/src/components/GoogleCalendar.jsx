@@ -27,7 +27,7 @@ const GoogleCalendar = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        "http://localhost:4000/api/settings/calendar-id"
+        `${import.meta.env.VITE_API_URL}/api/settings/calendar-id`
       );
       if (data && data.googleCalendarId) {
         setCalendarId(data.googleCalendarId);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Container,
   Grid,
@@ -11,29 +11,35 @@ import {
   ListItemText,
   Card,
   CardContent,
-  CardHeader
-} from '@mui/material';
+  CardHeader,
+} from "@mui/material";
 import {
   Event,
   CalendarToday,
   EmojiEvents,
-  PhotoLibrary
-} from '@mui/icons-material';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+  PhotoLibrary,
+} from "@mui/icons-material";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 const StatCard = ({ title, value, icon, color }) => (
   <Paper
     sx={{
       p: 3,
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
       bgcolor: `${color}.light`,
-      color: `${color}.dark`
-    }}
-  >
+      color: `${color}.dark`,
+    }}>
     <Box>
       <Typography variant="h6" color="inherit">
         {title}
@@ -54,12 +60,15 @@ const Overview = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get('http://localhost:4000/api/admin/stats', {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/admin/stats`,
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }
+        );
         setStats(data);
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error("Error fetching stats:", error);
       } finally {
         setLoading(false);
       }
@@ -70,7 +79,13 @@ const Overview = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}>
         <CircularProgress />
       </Box>
     );
@@ -89,7 +104,7 @@ const Overview = () => {
       <Typography variant="h4" gutterBottom>
         Dashboard Overview
       </Typography>
-      
+
       <Grid container spacing={3}>
         {/* Summary Stats */}
         <Grid item xs={12} sm={6} md={3}>
@@ -186,7 +201,9 @@ const Overview = () => {
                   <ListItem key={event._id}>
                     <ListItemText
                       primary={event.title}
-                      secondary={`${new Date(event.startDate).toLocaleDateString()} | ${event.venue}`}
+                      secondary={`${new Date(
+                        event.startDate
+                      ).toLocaleDateString()} | ${event.venue}`}
                     />
                   </ListItem>
                 ))}

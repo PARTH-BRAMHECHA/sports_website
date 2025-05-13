@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -19,30 +19,34 @@ import {
   IconButton,
   Box,
   Chip,
-  Stack
-} from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { DatePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+  Stack,
+} from "@mui/material";
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from "@mui/icons-material";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 const ManageEvents = () => {
   const [events, setEvents] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [sportInput, setSportInput] = useState('');
-  const [error, setError] = useState('');
+  const [sportInput, setSportInput] = useState("");
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
-    title: '',
-    type: '',
+    title: "",
+    type: "",
     startDate: null,
     endDate: null,
     sports: [],
-    venue: '',
-    description: '',
-    brochureUrl: '',
-    isActive: true
+    venue: "",
+    description: "",
+    brochureUrl: "",
+    isActive: true,
   });
   const { user } = useAuth();
 
@@ -52,20 +56,23 @@ const ManageEvents = () => {
 
   const fetchEvents = async () => {
     try {
-      const { data } = await axios.get('http://localhost:4000/api/admin/events', {
-        headers: { 
-          'Authorization': `Bearer ${user.token}`
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/admin/events`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
         }
-      });
+      );
       setEvents(data);
     } catch (error) {
-      console.error('Error fetching events:', error);
-      setError('Failed to load events. Please try again.');
+      console.error("Error fetching events:", error);
+      setError("Failed to load events. Please try again.");
     }
   };
 
   const handleOpen = (event = null) => {
-    setError('');
+    setError("");
     if (event) {
       setSelectedEvent(event);
       setFormData({
@@ -73,47 +80,50 @@ const ManageEvents = () => {
         startDate: dayjs(event.startDate),
         endDate: dayjs(event.endDate),
         // Ensure sports is always an array
-        sports: Array.isArray(event.sports) ? event.sports : 
-               (typeof event.sports === 'string' ? event.sports.split(',') : [])
+        sports: Array.isArray(event.sports)
+          ? event.sports
+          : typeof event.sports === "string"
+          ? event.sports.split(",")
+          : [],
       });
     } else {
       setSelectedEvent(null);
       setFormData({
-        title: '',
-        type: '',
+        title: "",
+        type: "",
         startDate: null,
         endDate: null,
         sports: [],
-        venue: '',
-        description: '',
-        brochureUrl: '',
-        isActive: true
+        venue: "",
+        description: "",
+        brochureUrl: "",
+        isActive: true,
       });
     }
-    setSportInput('');
+    setSportInput("");
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
     setSelectedEvent(null);
-    setError('');
+    setError("");
   };
 
   const handleAddSport = () => {
-    if (sportInput.trim() !== '') {
+    if (sportInput.trim() !== "") {
       setFormData({
         ...formData,
-        sports: [...formData.sports, sportInput.trim()]
+        sports: [...formData.sports, sportInput.trim()],
       });
-      setSportInput('');
+      setSportInput("");
     }
   };
 
   const handleRemoveSport = (sportToRemove) => {
     setFormData({
       ...formData,
-      sports: formData.sports.filter(sport => sport !== sportToRemove)
+      sports: formData.sports.filter((sport) => sport !== sportToRemove),
     });
   };
 
@@ -126,60 +136,68 @@ const ManageEvents = () => {
         startDate: formData.startDate ? formData.startDate.toISOString() : null,
         endDate: formData.endDate ? formData.endDate.toISOString() : null,
         // Ensure sports is always an array with at least one item
-        sports: formData.sports.length ? formData.sports : ['General']
+        sports: formData.sports.length ? formData.sports : ["General"],
       };
-      
+
       console.log("Submitting event data:", dataToSend);
-      
+
       if (selectedEvent) {
         await axios.put(
-          `http://localhost:4000/api/admin/events/${selectedEvent._id}`,
+          `${import.meta.env.VITE_API_URL}/api/admin/events/${
+            selectedEvent._id
+          }`,
           dataToSend,
           {
-            headers: { 
-              'Authorization': `Bearer ${user.token}`
-            }
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
           }
         );
       } else {
-        await axios.post('http://localhost:4000/api/admin/events', dataToSend, {
-          headers: { 
-            'Authorization': `Bearer ${user.token}`
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/admin/events`,
+          dataToSend,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
           }
-        });
+        );
       }
       fetchEvents();
       handleClose();
     } catch (error) {
-      console.error('Error saving event:', error);
+      console.error("Error saving event:", error);
       setError(error.response?.data?.error || error.message);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
+    if (window.confirm("Are you sure you want to delete this event?")) {
       try {
-        await axios.delete(`http://localhost:4000/api/admin/events/${id}`, {
-          headers: { 
-            'Authorization': `Bearer ${user.token}` 
+        await axios.delete(
+          `${import.meta.env.VITE_API_URL}/api/admin/events/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
           }
-        });
+        );
         fetchEvents();
       } catch (error) {
-        console.error('Error deleting event:', error);
+        console.error("Error deleting event:", error);
       }
     }
   };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
         <Typography variant="h4">Manage Events</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => handleOpen()}
-        >
+          onClick={() => handleOpen()}>
           Add Event
         </Button>
       </Box>
@@ -209,7 +227,7 @@ const ManageEvents = () => {
                   {new Date(event.endDate).toLocaleDateString()}
                 </TableCell>
                 <TableCell>{event.venue}</TableCell>
-                <TableCell>{event.isActive ? 'Active' : 'Inactive'}</TableCell>
+                <TableCell>{event.isActive ? "Active" : "Inactive"}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleOpen(event)}>
                     <EditIcon />
@@ -226,30 +244,33 @@ const ManageEvents = () => {
 
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>
-          {selectedEvent ? 'Edit Event' : 'Add New Event'}
+          {selectedEvent ? "Edit Event" : "Add New Event"}
         </DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
-            {error && <Box sx={{ color: 'error.main', mb: 2 }}>{error}</Box>}
-            
+            {error && <Box sx={{ color: "error.main", mb: 2 }}>{error}</Box>}
+
             <TextField
               fullWidth
               label="Title"
-              value={formData.title || ''}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              value={formData.title || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               margin="normal"
               required
             />
-            
+
             <TextField
               fullWidth
               select
               label="Type"
-              value={formData.type || ''}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              value={formData.type || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, type: e.target.value })
+              }
               margin="normal"
-              required
-            >
+              required>
               <MenuItem value="elevate">ELEVATE</MenuItem>
               <MenuItem value="intra">INTRA</MenuItem>
               <MenuItem value="tournament">Tournament</MenuItem>
@@ -258,7 +279,7 @@ const ManageEvents = () => {
             </TextField>
 
             {/* Date fields */}
-            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+            <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
               <TextField
                 label="Start Date"
                 type="date"
@@ -266,11 +287,17 @@ const ManageEvents = () => {
                 required
                 margin="normal"
                 InputLabelProps={{ shrink: true }}
-                value={formData.startDate ? formData.startDate.format('YYYY-MM-DD') : ''}
-                onChange={(e) => setFormData({ 
-                  ...formData, 
-                  startDate: e.target.value ? dayjs(e.target.value) : null
-                })}
+                value={
+                  formData.startDate
+                    ? formData.startDate.format("YYYY-MM-DD")
+                    : ""
+                }
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    startDate: e.target.value ? dayjs(e.target.value) : null,
+                  })
+                }
               />
               <TextField
                 label="End Date"
@@ -279,26 +306,32 @@ const ManageEvents = () => {
                 required
                 margin="normal"
                 InputLabelProps={{ shrink: true }}
-                value={formData.endDate ? formData.endDate.format('YYYY-MM-DD') : ''}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  endDate: e.target.value ? dayjs(e.target.value) : null
-                })}
+                value={
+                  formData.endDate ? formData.endDate.format("YYYY-MM-DD") : ""
+                }
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    endDate: e.target.value ? dayjs(e.target.value) : null,
+                  })
+                }
               />
             </Box>
 
             <TextField
               fullWidth
               label="Venue"
-              value={formData.venue || ''}
-              onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+              value={formData.venue || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, venue: e.target.value })
+              }
               margin="normal"
               required
             />
 
             {/* Sports field - now handling properly as an array */}
             <Box sx={{ mt: 2, mb: 2 }}>
-              <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+              <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
                 <TextField
                   fullWidth
                   label="Add Sport"
@@ -306,15 +339,17 @@ const ManageEvents = () => {
                   onChange={(e) => setSportInput(e.target.value)}
                   margin="normal"
                 />
-                <Button 
-                  variant="contained" 
+                <Button
+                  variant="contained"
                   onClick={handleAddSport}
-                  sx={{ mt: 2, height: 40 }}
-                >
+                  sx={{ mt: 2, height: 40 }}>
                   Add
                 </Button>
               </Box>
-              <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{ flexWrap: "wrap", gap: 1 }}>
                 {(formData.sports || []).map((sport, index) => (
                   <Chip
                     key={index}
@@ -324,12 +359,14 @@ const ManageEvents = () => {
                 ))}
               </Stack>
             </Box>
- 
+
             <TextField
               fullWidth
               label="Description"
-              value={formData.description || ''}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              value={formData.description || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               margin="normal"
               multiline
               rows={3}
@@ -339,15 +376,17 @@ const ManageEvents = () => {
             <TextField
               fullWidth
               label="Brochure URL (Optional)"
-              value={formData.brochureUrl || ''}
-              onChange={(e) => setFormData({ ...formData, brochureUrl: e.target.value })}
+              value={formData.brochureUrl || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, brochureUrl: e.target.value })
+              }
               margin="normal"
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             <Button type="submit" variant="contained">
-              {selectedEvent ? 'Update' : 'Create'}
+              {selectedEvent ? "Update" : "Create"}
             </Button>
           </DialogActions>
         </form>

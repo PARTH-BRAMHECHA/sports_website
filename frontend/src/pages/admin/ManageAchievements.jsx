@@ -73,7 +73,7 @@ const ManageAchievements = () => {
   const fetchAchievements = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/admin/achievements",
+        `${import.meta.env.VITE_API_URL}/api/admin/achievements`,
         {
           headers: { Authorization: `Bearer ${user.token}` },
         }
@@ -113,7 +113,9 @@ const ManageAchievements = () => {
     try {
       if (selectedAchievement) {
         await axios.put(
-          `http://localhost:4000/api/admin/achievements/${selectedAchievement._id}`,
+          `${import.meta.env.VITE_API_URL}/api/admin/achievements/${
+            selectedAchievement._id
+          }`,
           formData,
           {
             headers: { Authorization: `Bearer ${user.token}` },
@@ -121,7 +123,7 @@ const ManageAchievements = () => {
         );
       } else {
         await axios.post(
-          "http://localhost:4000/api/admin/achievements",
+          `${import.meta.env.VITE_API_URL}/api/admin/achievements`,
           formData,
           {
             headers: { Authorization: `Bearer ${user.token}` },
@@ -148,7 +150,9 @@ const ManageAchievements = () => {
   const handleDeleteAchievement = async () => {
     try {
       await axios.delete(
-        `http://localhost:4000/api/admin/achievements/${achievementToDelete._id}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/achievements/${
+          achievementToDelete._id
+        }`,
         {
           headers: { Authorization: `Bearer ${user.token}` },
         }

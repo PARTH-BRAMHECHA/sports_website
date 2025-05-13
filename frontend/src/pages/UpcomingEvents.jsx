@@ -90,7 +90,13 @@ const EventCard = styled(Card)(({ theme }) => ({
     left: 0,
     right: 0,
     height: "4px",
-    background: (props) => `linear-gradient(90deg, ${theme.palette[getEventTypeDetails(props.eventType).color].main} 0%, ${alpha(theme.palette[getEventTypeDetails(props.eventType).color].main, 0.5)} 100%)`,
+    background: (props) =>
+      `linear-gradient(90deg, ${
+        theme.palette[getEventTypeDetails(props.eventType).color].main
+      } 0%, ${alpha(
+        theme.palette[getEventTypeDetails(props.eventType).color].main,
+        0.5
+      )} 100%)`,
     borderTopLeftRadius: theme.spacing(2),
     borderTopRightRadius: theme.spacing(2),
   },
@@ -203,7 +209,8 @@ const EventHeader = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  background: (props) => alpha(theme.palette[getEventTypeDetails(props.eventType).color].main, 0.05),
+  background: (props) =>
+    alpha(theme.palette[getEventTypeDetails(props.eventType).color].main, 0.05),
   borderBottom: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
 }));
 
@@ -283,7 +290,7 @@ const UpcomingEvents = () => {
   const fetchEvents = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/admin/events"
+        `${import.meta.env.VITE_API_URL}/api/admin/events`
       );
       // Sort events by date
       const sortedEvents = data.sort(
@@ -565,14 +572,21 @@ const UpcomingEvents = () => {
                       }}>
                       <EventCard elevation={3} eventType={event.type}>
                         <EventHeader eventType={event.type}>
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}>
                             {getEventTypeDetails(event.type).icon}
                             <Typography variant="subtitle1" fontWeight={600}>
                               {getEventTypeDetails(event.type).label}
                             </Typography>
                           </Box>
                           <DateDisplay>
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography
+                              variant="caption"
+                              color="text.secondary">
                               {getMonthAbbr(event.startDate)}
                             </Typography>
                             <Typography variant="h5" fontWeight={700}>
@@ -582,30 +596,43 @@ const UpcomingEvents = () => {
                         </EventHeader>
 
                         <CardContent sx={{ pt: 2, pb: 1 }}>
-                          <Box sx={{ 
-                            mb: 1.5,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
-                            backgroundColor: alpha(theme.palette.background.default, 0.1),
-                            p: 1,
-                            borderRadius: 1
-                          }}>
-                            <Box sx={{ textAlign: 'center' }}>
-                              <Typography variant="caption" color="text.secondary">
+                          <Box
+                            sx={{
+                              mb: 1.5,
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 2,
+                              backgroundColor: alpha(
+                                theme.palette.background.default,
+                                0.1
+                              ),
+                              p: 1,
+                              borderRadius: 1,
+                            }}>
+                            <Box sx={{ textAlign: "center" }}>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary">
                                 Start Date
                               </Typography>
                               <Typography variant="body2" fontWeight={600}>
                                 {formatDate(event.startDate, true)}
                               </Typography>
                             </Box>
-                            <Box sx={{ 
-                              width: '1px', 
-                              height: '24px', 
-                              backgroundColor: alpha(theme.palette.divider, 0.2) 
-                            }} />
-                            <Box sx={{ textAlign: 'center' }}>
-                              <Typography variant="caption" color="text.secondary">
+                            <Box
+                              sx={{
+                                width: "1px",
+                                height: "24px",
+                                backgroundColor: alpha(
+                                  theme.palette.divider,
+                                  0.2
+                                ),
+                              }}
+                            />
+                            <Box sx={{ textAlign: "center" }}>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary">
                                 End Date
                               </Typography>
                               <Typography variant="body2" fontWeight={600}>
@@ -614,45 +641,52 @@ const UpcomingEvents = () => {
                             </Box>
                           </Box>
 
-                          <Box sx={{ 
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-start',
-                            mb: 1.5,
-                            padding: "12px 16px",
-                            backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.05),
-                            borderRadius: "8px",
-                            position: "relative",
-                            minHeight: "80px",
-                            "&::before": {
-                              content: '""',
-                              position: "absolute",
-                              left: 0,
-                              top: 0,
-                              bottom: 0,
-                              width: "4px",
-                              backgroundColor: (theme) => theme.palette.primary.main,
-                              borderTopLeftRadius: "8px",
-                              borderBottomLeftRadius: "8px",
-                            },
-                            "&:hover": {
-                              backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
-                              transform: "translateX(4px)",
-                              transition: "all 0.3s ease",
-                            },
-                          }}>
-                            <Box sx={{ 
-                              display: 'flex', 
-                              alignItems: 'center', 
-                              gap: 2,
-                              maxWidth: '90%',
-                              paddingLeft: '8px'
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "flex-start",
+                              mb: 1.5,
+                              padding: "12px 16px",
+                              backgroundColor: (theme) =>
+                                alpha(theme.palette.primary.main, 0.05),
+                              borderRadius: "8px",
+                              position: "relative",
+                              minHeight: "80px",
+                              "&::before": {
+                                content: '""',
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                                bottom: 0,
+                                width: "4px",
+                                backgroundColor: (theme) =>
+                                  theme.palette.primary.main,
+                                borderTopLeftRadius: "8px",
+                                borderBottomLeftRadius: "8px",
+                              },
+                              "&:hover": {
+                                backgroundColor: (theme) =>
+                                  alpha(theme.palette.primary.main, 0.08),
+                                transform: "translateX(4px)",
+                                transition: "all 0.3s ease",
+                              },
                             }}>
-                              <EmojiEvents sx={{ 
-                                color: (theme) => theme.palette.primary.main,
-                                fontSize: '1.25rem',
-                                transform: 'scale(1.2)'
-                              }} />
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 2,
+                                maxWidth: "90%",
+                                paddingLeft: "8px",
+                              }}>
+                              <EmojiEvents
+                                sx={{
+                                  color: (theme) => theme.palette.primary.main,
+                                  fontSize: "1.25rem",
+                                  transform: "scale(1.2)",
+                                }}
+                              />
                               <Typography
                                 variant="h5"
                                 component="h2"
@@ -665,8 +699,8 @@ const UpcomingEvents = () => {
                                   lineHeight: 1.4,
                                   color: (theme) => theme.palette.primary.main,
                                   margin: 0,
-                                  textAlign: 'center',
-                                  fontSize: '1.25rem'
+                                  textAlign: "center",
+                                  fontSize: "1.25rem",
                                 }}>
                                 {event.title}
                               </Typography>
@@ -691,14 +725,22 @@ const UpcomingEvents = () => {
                               <Typography variant="subtitle2" gutterBottom>
                                 Sports & Activities:
                               </Typography>
-                              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  gap: 1,
+                                }}>
                                 {event.sports.map((sport) => (
                                   <SportChip
                                     key={sport}
                                     label={sport}
                                     size="small"
                                     sx={{
-                                      backgroundColor: alpha(theme.palette.primary.light, 0.1),
+                                      backgroundColor: alpha(
+                                        theme.palette.primary.light,
+                                        0.1
+                                      ),
                                       color: theme.palette.primary.main,
                                     }}
                                   />
@@ -708,14 +750,24 @@ const UpcomingEvents = () => {
                           )}
                         </CardContent>
 
-                        <CardActions sx={{ mt: "auto", p: 1.5, borderTop: `1px solid ${alpha(theme.palette.divider, 0.08)}` }}>
+                        <CardActions
+                          sx={{
+                            mt: "auto",
+                            p: 1.5,
+                            borderTop: `1px solid ${alpha(
+                              theme.palette.divider,
+                              0.08
+                            )}`,
+                          }}>
                           {event.brochureUrl && (
                             <Button
                               variant="outlined"
                               color="secondary"
                               size="small"
                               startIcon={<GetApp />}
-                              onClick={() => window.open(event.brochureUrl, "_blank")}
+                              onClick={() =>
+                                window.open(event.brochureUrl, "_blank")
+                              }
                               sx={{
                                 borderRadius: "20px",
                                 textTransform: "none",

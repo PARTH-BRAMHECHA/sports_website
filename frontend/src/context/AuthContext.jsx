@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
   const checkAuthStatus = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+      const apiUrl = import.meta.env.VITE_API_URL;
       const { data } = await axios.get(`${apiUrl}/api/auth/me`);
       setUser(data);
     } catch (error) {
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     console.log("🔹 Sending login request:", credentials);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+      const apiUrl = import.meta.env.VITE_API_URL;
       const { data } = await axios.post(`${apiUrl}/api/auth/login`, {
         ...credentials,
         userType: credentials.userType || "student",
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
     console.log("🔹 Sending signup request:", userData); // ✅ Debugging
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+      const apiUrl = import.meta.env.VITE_API_URL;
       await axios.post(`${apiUrl}/api/auth/register`, {
         ...userData,
         userType: userData.userType || "student", // Ensure userType is always sent

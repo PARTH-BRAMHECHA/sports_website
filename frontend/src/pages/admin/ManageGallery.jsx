@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Container,
   Grid,
@@ -14,20 +14,20 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  CircularProgress
-} from '@mui/material';
-import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+  CircularProgress,
+} from "@mui/material";
+import { Delete as DeleteIcon, Add as AddIcon } from "@mui/icons-material";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 const ManageGallery = () => {
   const [images, setImages] = useState([]);
   const [open, setOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    file: null
+    title: "",
+    description: "",
+    file: null,
   });
   const { user } = useAuth(); // Ensure user is available
 
@@ -37,12 +37,15 @@ const ManageGallery = () => {
 
   const fetchImages = async () => {
     try {
-      const { data } = await axios.get('http://localhost:4000/api/gallery', {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/gallery`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
       setImages(data);
     } catch (error) {
-      console.error('Error fetching images:', error);
+      console.error("Error fetching images:", error);
     }
   };
 
@@ -58,46 +61,47 @@ const ManageGallery = () => {
     setUploading(true);
 
     const formData = new FormData();
-formData.append("image", selectedFile);
-formData.append("title", "Sample Title");
-formData.append("description", "Sample Description");
-formData.append("user", userId); // Ensure user ID is valid
+    formData.append("image", selectedFile);
+    formData.append("title", "Sample Title");
+    formData.append("description", "Sample Description");
+    formData.append("user", userId); // Ensure user ID is valid
 
-fetch("/api/gallery", {
-    method: "POST",
-    headers: {
-        "Authorization": `Bearer ${token}` // Ensure authentication token is sent
-    },
-    body: formData
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error(error));
-
+    fetch("/api/gallery", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`, // Ensure authentication token is sent
+      },
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this image?')) {
+    if (window.confirm("Are you sure you want to delete this image?")) {
       try {
-        await axios.delete(`http://localhost:4000/api/gallery/${id}`, {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
+        await axios.delete(
+          `${import.meta.env.VITE_API_URL}/api/gallery/${id}`,
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }
+        );
         fetchImages();
       } catch (error) {
-        console.error('Error deleting image:', error);
+        console.error("Error deleting image:", error);
       }
     }
   };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
         <Typography variant="h4">Manage Gallery</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => setOpen(true)}
-        >
+          onClick={() => setOpen(true)}>
           Add Image
         </Button>
       </Box>
@@ -111,9 +115,10 @@ fetch("/api/gallery", {
                 height="200"
                 image={image.imageUrl} // ✅ FIXED: Use `image.imageUrl` instead of `image.url`
                 alt={image.title}
-                sx={{ objectFit: 'cover' }}
+                sx={{ objectFit: "cover" }}
               />
-              <CardActions sx={{ justifyContent: 'space-between', px: 2, py: 1 }}>
+              <CardActions
+                sx={{ justifyContent: "space-between", px: 2, py: 1 }}>
                 <Box>
                   <Typography variant="subtitle1">{image.title}</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -122,8 +127,7 @@ fetch("/api/gallery", {
                 </Box>
                 <IconButton
                   color="error"
-                  onClick={() => handleDelete(image._id)}
-                >
+                  onClick={() => handleDelete(image._id)}>
                   <DeleteIcon />
                 </IconButton>
               </CardActions>
@@ -132,7 +136,11 @@ fetch("/api/gallery", {
         ))}
       </Grid>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="sm"
+        fullWidth>
         <DialogTitle>Add New Image</DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
@@ -140,7 +148,9 @@ fetch("/api/gallery", {
               fullWidth
               label="Title"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               margin="normal"
               required
             />
@@ -148,7 +158,9 @@ fetch("/api/gallery", {
               fullWidth
               label="Description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               margin="normal"
               multiline
               rows={3}
@@ -157,8 +169,7 @@ fetch("/api/gallery", {
               variant="outlined"
               component="label"
               fullWidth
-              sx={{ mt: 2 }}
-            >
+              sx={{ mt: 2 }}>
               Upload Image
               <input
                 type="file"
@@ -178,9 +189,8 @@ fetch("/api/gallery", {
             <Button
               type="submit"
               variant="contained"
-              disabled={!formData.file || uploading}
-            >
-              {uploading ? <CircularProgress size={24} /> : 'Upload'}
+              disabled={!formData.file || uploading}>
+              {uploading ? <CircularProgress size={24} /> : "Upload"}
             </Button>
           </DialogActions>
         </form>
