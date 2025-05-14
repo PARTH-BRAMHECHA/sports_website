@@ -20,7 +20,7 @@ const facilitiesData = [
   {
     id: 4,
     name: "Gymnasium",
-    description: "Modern gym equipped with latest fitness equipment",
+    description: "Modern gym equipped with latest fitness equipments",
     image: "./images/gym-bg.jpg",
   },
   {
